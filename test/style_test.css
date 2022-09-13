@@ -1,0 +1,24 @@
+body {
+    background-color: rgb(243, 238, 232)
+}
+#topp {
+    color: blue;
+    background-color:rgb(149, 87, 124);
+    padding: 15px;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+#lorem {
+    color: salmon;
+}
+#instruksjoner {
+    font-family: 'Franklin Gothic Medium', Georgia, 'Times New Roman', Times, sans-serif;
+    font-size: 30px;
+}
+.gronnneKantlinjer {
+    border: 10px solid rgb(28, 90, 28);
+}
+img:hover{
+    border: 5px solid black;
+    border-radius: 5px;
+}

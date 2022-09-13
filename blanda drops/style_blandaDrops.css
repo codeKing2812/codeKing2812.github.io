@@ -1,0 +1,28 @@
+body {
+    background-color: beige;
+}
+p {
+    margin-left: 25px;
+}
+.uthevSitat {
+    background-color: grey;
+}
+.uthevOrd {
+    background-color: yellow;
+    color: grey;
+}
+#boks {
+    width: 600px;
+    height: 600px;
+    border: 2px solid grey;
+    padding: 2em;
+    margin: auto;
+    color: black;
+    background-color: white;
+}
+#boks h1 {
+    color: crimson;
+}
+#liste p:nth-child(even) {
+    color: chocolate;
+}

@@ -1,0 +1,17 @@
+@font-face {
+    font-family: silkscreen;
+    src:url(../fonter/Silkscreen-Regular.ttf);
+}
+body {
+    background-color:rgb(205, 241, 255)
+}
+h2 {
+    font-family: silkscreen;
+}
+button:focus{
+    border: 3px solid black;
+    border-radius: 3px;
+}
+.score {
+    font-family: silkscreen;
+}

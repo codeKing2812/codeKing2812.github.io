@@ -1,0 +1,55 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+body {
+    background-color: #4f5777;
+}
+
+#hoved {
+    width: 100%;
+    height: 100%;
+
+    grid-template-columns: repeat (5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-template-areas:"t t t t t"
+                        ". s s s ."
+                        ". s s s ."
+                        ". s s s ."
+                        "b b b b b";
+}
+
+.topp {
+    grid-area: t;
+    background-color: aliceblue;
+}
+
+#bondesjakk {
+    width: 50%;
+    aspect-ratio: 1;
+    display: grid;
+    background-color: #4f5777;
+    grid-area: s;
+
+    gap: 5%;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+#bondesjakk :nth-child(odd){
+    background-color: rgb(255, 254, 254);
+}
+#bondesjakk > div {
+    background-color: #e5f5e0ba;
+    border: 1px solid black;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.bunn {
+    grid-area: b;
+}
