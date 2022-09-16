@@ -13,7 +13,7 @@ body {
     height: 100%;
 
     grid-template-columns: repeat (5, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-rows: repeat (5, 1fr);
     grid-template-areas:"t t t t t"
                         ". s s s ."
                         ". s s s ."
@@ -27,13 +27,13 @@ body {
 }
 
 #bondesjakk {
-    width: 50%;
+    width: 500px;
     aspect-ratio: 1;
     display: grid;
     background-color: #4f5777;
     grid-area: s;
 
-    gap: 5%;
+    gap: 5px;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 }
