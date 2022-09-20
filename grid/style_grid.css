@@ -5,51 +5,88 @@ html, body {
     height: 100%;
 }
 body {
-    background-color: #4f5777;
+    display: flex;
+    justify-content: center;
 }
 
 #hoved {
     width: 100%;
     height: 100%;
+    padding: 10px;
+    background-color: antiquewhite;
+    display: grid;
+    gap: 1%;
+    box-sizing: border-box;
 
-    grid-template-columns: repeat (5, 1fr);
-    grid-template-rows: repeat (5, 1fr);
-    grid-template-areas:"t t t t t"
-                        ". s s s ."
-                        ". s s s ."
-                        ". s s s ."
-                        "b b b b b";
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    grid-template-areas:
+    't  t   t   t   t  ga1'
+    '.  s   s   s  ga2 ga2'
+    'm  s   s   s   h  h'
+    'm  s   s   s   h  h'
+    'm  b   b  ga4 ga4 ga3'
+    'm ga5 ga5 ga5 ga5 ga3';
 }
 
-.topp {
-    grid-area: t;
-    background-color: aliceblue;
+.topp {grid-area: t;}
+.hoyre {grid-area: h;}
+.bunn {grid-area: b;}
+.meny {grid-area: m;}
+.spill {grid-area: s;}
+.ga1 {grid-area: ga1;}
+.ga2 {grid-area: ga2;}
+.ga3 {grid-area: ga3;}
+.ga4 {grid-area: ga4;}
+.ga5 {grid-area: ga5;}
+
+@media screen and (max-width: 700px){
+    #hoved {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+        grid-template-areas:
+        't t ga1'
+        '. ga2 ga2'
+        'm s h'
+        'm b b'
+        'ga4 ga4 ga3'
+        'ga5 ga5 ga5';
+    }
 }
 
-#bondesjakk {
-    width: 500px;
+#hoved > div {
+    border-radius: 5px;
+    background-color: rgb(178, 190, 201);
+    display: flex;
+    justify-content: center;
+}
+
+
+
+
+.spill {
+    align-items: center;
+}
+
+/* #bondesjakk {
+    height: 100%;
     aspect-ratio: 1;
     display: grid;
-    background-color: #4f5777;
-    grid-area: s;
-
-    gap: 5px;
+    
+    gap: 2px;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 }
 #bondesjakk :nth-child(odd){
-    background-color: rgb(255, 254, 254);
+    background-color: rgb(32, 32, 32);
+    color: rgb(255, 255, 255);
 }
 #bondesjakk > div {
-    background-color: #e5f5e0ba;
+    background-color: #ffffff;
     border: 1px solid black;
-    border-radius: 5px;
+    border-radius: 2px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 2rem;
-}
-
-.bunn {
-    grid-area: b;
-}
+} */
