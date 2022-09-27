@@ -1,0 +1,78 @@
+@font-face {
+    font-family: josefinsans;
+    src: url(../fonter/JosefinSans-Light.ttf);
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 1.25em;
+    font-family:josefinsans;
+
+}
+.toppMeny {
+    width: 100%;
+    height: 50px;
+    background-color: #294C60;
+    display: grid;
+    gap: 5px;
+
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-areas: 
+    'hj sy hø . . . . . . .';
+}
+#hjem {grid-area: hj;}
+#syn {grid-area: sy;}
+#hørsel {grid-area: hø;}
+
+.toppMeny div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.toppMeny a {
+    text-decoration: none;
+    color: #FF7D00;
+    padding: 2px;
+    margin: 5px;
+}
+.toppMeny a:hover {
+    border: 2px solid #FF7D00;
+    border-radius: 2px;
+    margin: 3px;
+}
+
+/* Alt over dette er stilsetting av menyen, som skal være lik for alle sidene */
+.hoved {
+    width: 100%;
+    height: auto;
+    background-color: #FFEFD3;
+    display: grid;
+    gap: 5px;
+    box-sizing: border-box;
+    padding: 10%;
+
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    grid-template-areas: 
+    'd1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1'
+    'd1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1'
+    'd1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1'
+    'd1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1'
+    '.  .  .  .  .  .  .  .  .  .  .  .'
+    'd2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2'
+    'd2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2'
+    'd2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2'
+    '.  .  .  .  .  .  .  .  .  .  .  .'
+    'd3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3'
+    'd3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3'
+    'd3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3';
+}
+#del1 {grid-area: d1;}
+#del2 {grid-area: d2;}
+#del3 {grid-area: d3;}
+
+.hoved div {
+    color: #001B2E;
+}
