@@ -1,0 +1,36 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+
+    background-color: #91C499;
+
+    display: flex;
+    justify-content: center;
+}
+
+.hoved {
+    width: 90%;
+    height: 600px;
+    background-color: #808F85;
+    display: grid;
+    gap: 5px;
+
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    grid-template-areas:
+    'm t t t'
+    'm t t t'
+    'm . . .'
+    'b b b b';
+}
+.topp {grid-area: t;}
+.midt {grid-area: m;}
+.bunn {grid-area: b;}
+
+.hoved div {
+    background-color: #595959;
+    display: flex;
+    justify-content: center;
+}

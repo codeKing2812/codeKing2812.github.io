@@ -1,0 +1,54 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+
+    background-color: rgb(216, 134, 134);
+}
+
+.hoved {
+    width: 75%;
+    height: 300px;
+    background-color: aqua;
+
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.hoved div {
+    border: 5px solid black;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.hoved :hover {
+    background-color: aliceblue;
+}
+
+.topp {
+    background-color: blueviolet;
+    height: 100px;
+    width: 200px;
+}
+.midt {
+    height: 100px;
+    width: 100px;
+
+    overflow:hidden;
+}
+.midt img {
+    height: 100%;
+}
+
+.bunn {
+    background-color: blueviolet;
+    height: 100px;
+    width: 100px;
+}
+
+ 

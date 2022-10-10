@@ -1,0 +1,71 @@
+@font-face {
+    font-family: josefinsans;
+    src: url(../fonter/JosefinSans-Light.ttf);
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 1.1em;
+    font-family:josefinsans;
+}
+
+.toppMeny {
+    width: 100%;
+    height: 50px;
+    background-color: #D8B4A0;
+    display: grid;
+    gap: 5px;
+
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-areas: 
+    'hj hj hj . . . . pa pr ut';
+}
+#hjem {grid-area: hj;}
+#passord {grid-area: pa;}
+#programvare {grid-area: pr;}
+#utskrift {grid-area: ut;}
+
+#brackets {
+    width: 20px;
+}
+
+.toppMeny div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#hjem a:hover {
+    border: 2px solid #000000;
+    border-radius: 2px;
+    margin: 3px;
+}
+#hjem a {
+    text-decoration: none;
+    color: #000000;
+    padding: 2px;
+    margin: 5px;
+}
+.meny a:hover {
+    border: 2px solid #125607;
+    border-radius: 2px;
+    margin: 3px;
+}
+.meny a {
+    text-decoration: none;
+    color: #125607;
+    padding: 2px;
+    margin: 5px;
+}
+
+/* Alt over dette er stilsetting av menyen, som skal være lik for alle sidene */
+.hoved {
+    margin: 5%;
+}
+@media screen and (max-width: 800px){
+    .toppMeny {
+        grid-template-areas:
+        'hj hj hj hj hj . . pa pr ut';
+    }
+}
