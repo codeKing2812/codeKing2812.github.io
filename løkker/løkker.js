@@ -21,3 +21,19 @@ for (i = 0; i < JBnavn.length; i++) {
         console.log(bokstav);
     };
 };
+
+function randomTallFraTil (min, maks) {
+    min = Math.ceil(min);
+    maks = Math.floor(maks);
+    return Math.floor(Math.random() * (maks - min + 1) + min);
+};
+
+console.log(randomTallFraTil(1, 10));
+
+let tilfeldigTallArray = [];
+
+for (i = 0; i < 100; i++) {
+    tilfeldigTallArray = [i] = randomTallFraTil(1, 20);
+}
+
+console.log(tilfeldigTallArray)
