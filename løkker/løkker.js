@@ -28,12 +28,14 @@ function randomTallFraTil (min, maks) {
     return Math.floor(Math.random() * (maks - min + 1) + min);
 };
 
-console.log(randomTallFraTil(1, 10));
+console.log('Tilfeldig tall fra 1 til 10:', randomTallFraTil(1, 10));
 
 let tilfeldigTallArray = [];
 
-for (i = 0; i < 100; i++) {
-    tilfeldigTallArray = [i] = randomTallFraTil(1, 20);
+for (i = 0; i < 10; i++) {
+    tilfeldigTallArray[i] = randomTallFraTil(1, 20);
 }
 
-console.log(tilfeldigTallArray)
+console.log(tilfeldigTallArray);
+
+
