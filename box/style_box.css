@@ -7,8 +7,6 @@ body {
 }
 
 #mycanvas {
-    height: 500px;
-    width: 500px;
-    background-color: antiquewhite;
+    background-color: rgb(255, 248, 239);
     border: 2px solid black;
 }
