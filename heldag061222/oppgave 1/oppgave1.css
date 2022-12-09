@@ -1,0 +1,16 @@
+.pris {
+    animation: fest 0.2s infinite alternate;
+    font-size: 2em;
+}
+@keyframes fest {
+    from {color: red;}
+    to {color: yellow;}
+}
+body {
+    background-color: rgb(133, 141, 191);
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
