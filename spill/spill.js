@@ -34,7 +34,11 @@ class sprite {
                     this.sheetNr ++;
                 } else {this.sheetNr = 1;}
             } 
-        } else {this.sheetNr = 0;}
+        } else {
+            this.sheetNr = 0;
+            // this.sheetX = 50;
+            // this.sheetWidth = 10;
+        }
 
         this.x += this.xv;
         this.y += this.yv; //flytt
@@ -43,12 +47,11 @@ class sprite {
         if(this.x + this.width < 0) {this.x = canvas.width;}
         if(this.y > canvas.height) {this.y = -this.height;}
         if(this.y + this.height < 0) {this.y = canvas.height;} //bli i bildet
-
     }
 }}
 
 
-function tyngdekraft(spiller) { // orginal tyngdekraft funksjon
+function tyngdekraft_1(spiller) { // orginal tyngdekraft funksjon
     for (let bakke of bakkeArr) {
         if (crash(spiller, bakke)) {
             spiller.iLuften = true;
@@ -68,18 +71,18 @@ function crash(sprite1, sprite2) {
     }
 };
 
-function tyngdekraft2(spiller) { //tyngdekraft versjon 2
+function tyngdekraft(spiller) { //tyngdekraft versjon 2
     spiller.iLuften = bakkeArr.every(sjekk);
-    console.log('spiller i luften:', spiller.iLuften)
     
     function sjekk(denne) {
         if (crash(spiller, denne)) {
+            spiller.y = denne.y - (spiller.height);
             return false;
         } else {return true;}
     }
 
     if (!spiller.iLuften) {
-        spiller.yv = 0;
+        spiller.yv = -0.1;
     } else {spiller.yv += 0.5;}
 }
 
@@ -90,18 +93,24 @@ const spritesheetRød = new Image();
 spritesheetRød.src = 'bilder/Flosshattmann.png';
 
 const bakkeBilde = new Image();
-bakkeBilde.src = 'bilder/bakke.png';
+bakkeBilde.src = 'bilder/bakke-1.0.png';
 
-let grønn = new sprite(0, 0, 100, 210, 250, 250, 100, 210, 0, 0, 0.5, true, false, true, spritesheetGrønn);
+let grønn = new sprite(5, 0, 90, 210, 250, 250, 100, 210, 0, 0, 0.5, true, false, true, spritesheetGrønn);
 let rød = new sprite(0, 0, 100, 100, 350, 350, 150, 150, 0, 0, 0.5, true, false, true, spritesheetRød);
 
 let bakkeArr = []
 function nyBakke(x, y, lengde) {
-    bakkeArr.push(new sprite(0, 0, 500, 100, x, y, lengde, 100, 0, 0, 0, false, false, false, bakkeBilde))
+    while (lengde > 500) {
+        bakkeArr.push(new sprite(0, 0, 500, 100, x, y, 500, 100, 0, 0, 0, false, false, false, bakkeBilde))
+        lengde -= 500;
+        x += 500;
+    }
+    bakkeArr.push(new sprite(0, 0, lengde, 100, x, y, lengde, 100, 0, 0, 0, false, false, false, bakkeBilde))
 }
 
-nyBakke(100, 310, 200)//opretter to nye bakke-blokker
-nyBakke(200, 300, 300)
+nyBakke(200, 500, 200)//opretter bakke-blokker
+nyBakke(-50, 550, 10000)
+nyBakke(500, 100, 100)
 
 //------------KNAPPER-------------
 
@@ -177,14 +186,12 @@ addEventListener("keyup", function(e) {
 let frame = 0;
 function loop() { 
     ctx.clearRect(0,0,canvas.width,canvas.height);
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
     frame++;
 
-    tyngdekraft2(grønn);
-
-    // tyngdekraft(grønn);
+    tyngdekraft(grønn);
     // tyngdekraft(rød);
-
-    // console.log(grønn.iLuften)
 
     for (let bakke of bakkeArr) {
         bakke.draw();
@@ -193,12 +200,12 @@ function loop() {
     grønn.draw();
     // rød.draw();
 
-    if (Wtast && !grønn.iLuften) { //hopp
+    if (Wtast && !grønn.iLuften || OppTast && !grønn.iLuften) { //hopp
         grønn.yv = -10; grønn.iLuften = true;
     }
-    if (Atast || Dtast) { //gå til siden
+    if (Atast || Dtast || HøyreTast || VenstreTast) { //gå til siden
         grønn.animer = true;
-        if (Dtast) {
+        if (Dtast || HøyreTast) {
             grønn.flip = false;
             grønn.xv = 3;
         } else {
