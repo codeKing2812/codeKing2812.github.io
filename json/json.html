@@ -4,10 +4,56 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="json.js"></script>
+    <script src="json.js" defer></script>
+    <link rel="stylesheet" href="style_json.css">
     <title>json?</title>
 </head>
 <body>
-    
+    <div>
+        <h1>Påskerennet</h1>
+        <div id="oversikt">
+            <table id="tabell">
+            </table>
+            <button id="plussKnapp">+</button>
+        </div>
+
+        <div id="registrering">
+
+            <form id="skjema_nyPerson">
+                <p>Legg til nye deltakere:</p>
+                <label for="navn">Navn:</label>
+                <br>
+                <input type="text" autocomplete="off" id="navn">
+                <br>
+                <label for="alder">Alder:</label>
+                <br>
+                <input type="text" autocomplete="off" id="alder">
+                <br>
+                <button>Legg til</button>
+            </form>
+            <br>
+            <button id="slettKnapp">Slett forrige deltaker</button>
+            
+            <form id="skjema_resultat">
+                <p>Legg inn resultater etter aktivitetene:</p>
+                <label for="akt1">Aktivitet 1:</label>
+                <br>
+                <input type="number" autocomplete="off" id="akt1">
+                <br>
+                <label for="akt2">Aktivitet 2:</label>
+                <br>
+                <input type="number" autocomplete="off" id="akt2">
+                <br>
+                <label for="akt3">Aktivitet 3:</label>
+                <br>
+                <input type="number" autocomplete="off" id="akt3">
+                <br>
+                <button>Legg til</button>
+            </form>
+            <br>
+            <button id="slettKnapp">Slett forrige resultat</button>
+
+        </div>
+    </div>
 </body>
 </html>
