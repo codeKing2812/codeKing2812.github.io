@@ -29,7 +29,7 @@ class sprite {
         
         this.sheetY = this.sheetHeight * this.sheetNr;
         if (this.animer) {
-            if ((frame/7) % 1 == 0)  {//bytt animasjonsbilde hvær n'te frame
+            if ((frame/7) % 1 == 0)  {//bytt animasjonsbilde hver n'te frame
                 if (this.sheetNr < 6) {
                     this.sheetNr ++;
                 } else {this.sheetNr = 1;}
@@ -42,7 +42,7 @@ class sprite {
 
         this.x += this.xv;
         this.y += this.yv; //flytt
-    
+        
         if(this.x > canvas.width) {this.x = -this.width;}
         if(this.x + this.width < 0) {this.x = canvas.width;}
         if(this.y > canvas.height) {this.y = -this.height;}
@@ -65,26 +65,57 @@ function tyngdekraft_1(spiller) { // orginal tyngdekraft funksjon
     } else {spiller.yv += 0.5;}
 };
 
-function crash(sprite1, sprite2) {
-    if (sprite1.x + sprite1.width > sprite2.x && sprite1.x < sprite2.x + sprite2.width && sprite1.y + sprite1.height > sprite2.y && sprite1.y < sprite2.y + sprite2.height) {
-        return true;
-    }
-};
-
 function tyngdekraft(spiller) { //tyngdekraft versjon 2
     spiller.iLuften = bakkeArr.every(sjekk);
-    
+
     function sjekk(denne) {
-        if (crash(spiller, denne)) {
+        let denneResultat = touching(spiller, denne);
+
+        if (denneResultat == 'bunn') {
             spiller.y = denne.y - (spiller.height);
             return false;
+        } else if (denneResultat == 'topp') {
+            spiller.y = denne.y + (denne.height);
+            return true;
+        } else if (denneResultat == 'høyre') {
+            spiller.x = denne.x - (spiller.width);
+            return true;
+        } else if (denneResultat == 'venstre') {
+            spiller.x = denne.x + (denne.width);
         } else {return true;}
     }
 
     if (!spiller.iLuften) {
-        spiller.yv = -0.1;
+        spiller.yv = 0;
     } else {spiller.yv += 0.5;}
-}
+};
+
+function touching(sprite1, sprite2) {
+    if (sprite1.x + sprite1.width > sprite2.x && sprite1.x < sprite2.x + sprite2.width && 
+        sprite1.y + sprite1.height > sprite2.y && sprite1.y < sprite2.y + sprite2.height) {
+        
+        // console.log('touch')
+        
+        // if (sprite1.y + sprite1.height < sprite2.y + 5) {
+        //     return 'bunn';
+        // } else 
+        if (sprite1.y > sprite2.y + sprite2.height - 5) {
+            console.log('topp')
+            return 'topp'
+        } else if (sprite1.x + sprite1.width < sprite2.x + 5) {
+            console.log('høyre')
+            return 'høyre';
+        } else if (sprite1.x > sprite2.x + sprite2.width - 5) {
+            console.log('venstre')
+            return 'venstre';
+        } else {
+            console.log('bunn')
+            return 'bunn';
+        }
+
+        // return true;
+    }
+};
 
 const spritesheetGrønn = new Image();
 spritesheetGrønn.src = 'bilder/spiller-3.2.png';
@@ -95,7 +126,7 @@ spritesheetRød.src = 'bilder/Flosshattmann.png';
 const bakkeBilde = new Image();
 bakkeBilde.src = 'bilder/bakke-1.0.png';
 
-let grønn = new sprite(5, 0, 90, 210, 250, 250, 100, 210, 0, 0, 0.5, true, false, true, spritesheetGrønn);
+let grønn = new sprite(10, 0, 90, 210.15, 250, 250, 100, 210, 0, 0, 0.5, true, false, true, spritesheetGrønn);
 let rød = new sprite(0, 0, 100, 100, 350, 350, 150, 150, 0, 0, 0.5, true, false, true, spritesheetRød);
 
 let bakkeArr = []
@@ -108,9 +139,9 @@ function nyBakke(x, y, lengde) {
     bakkeArr.push(new sprite(0, 0, lengde, 100, x, y, lengde, 100, 0, 0, 0, false, false, false, bakkeBilde))
 }
 
-nyBakke(200, 500, 200)//opretter bakke-blokker
+nyBakke(200, 450, 200)//opretter bakke-blokker
 nyBakke(-50, 550, 10000)
-nyBakke(500, 100, 100)
+nyBakke(550, 200, 100)
 
 //------------KNAPPER-------------
 
@@ -125,57 +156,57 @@ let VenstreTast = false;
 let HøyreTast = false;
 
 addEventListener("keydown", function(e) {
-    if(e.key=="w") {
+    if(e.code=='KeyW') {
         Wtast = true;
     }
-    if(e.key=="s") {
+    if(e.code=='KeyS') {
         Stast = true;
     }
-    if(e.key=="a") {
+    if(e.code=='KeyA') {
         Atast = true;
     }
-    if(e.key=="d") {
+    if(e.code=='KeyD') {
         Dtast = true;
     }
 
-    if(e.key=="ArrowUp") {
+    if(e.key=='ArrowUp') {
         OppTast = true;
     }
-    if(e.key=="ArrowDown") {
+    if(e.key=='ArrowDown') {
         NedTast = true;
     }
     if(e.key=='ArrowRight') {
         HøyreTast = true;
     }
-    if(e.key=="ArrowLeft") {
+    if(e.key=='ArrowLeft') {
         VenstreTast = true;
     }
 });
 
 addEventListener("keyup", function(e) {
-    if(e.key=="w") {
+    if(e.code=='KeyW') {
         Wtast = false;
     }
-    if(e.key=="s") {
+    if(e.code=='KeyS') {
         Stast = false;
     }
-    if(e.key=="a") {
+    if(e.code=='KeyA') {
         Atast = false;
     }
-    if(e.key=="d") {
+    if(e.code=='KeyD') {
         Dtast = false;
     }
 
-    if(e.key=="ArrowUp") {
+    if(e.key=='ArrowUp') {
         OppTast = false;
     }
-    if(e.key=="ArrowDown") {
+    if(e.key=='ArrowDown') {
         NedTast = false;
     }
     if(e.key=='ArrowRight') {
         HøyreTast = false;
     }
-    if(e.key=="ArrowLeft") {
+    if(e.key=='ArrowLeft') {
         VenstreTast = false;
     }
 });
