@@ -29,10 +29,11 @@ function oppdaterDeltakerListe() {
     
     for (let person of personer) {
         let rad = document.createElement('tr');
-        tabell.appendChild(rad);  
+        tabell.appendChild(rad);
+        person.tot = person.akt1 + person.akt2 + person.akt3;
         rad.innerHTML += '<td>' + person.navn + '</td>' + '<td>' + person.alder + '</td>' + '<td>' + person.akt1 + '</td>' + '<td>' + person.akt2 + '</td>' + '<td>' + person.akt3 + '</td>' + '<td>' + person.tot + '</td>';
     };
-    console.log(personer)
+    console.log(personer);
 };
 
 function slettForrige() {
