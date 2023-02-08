@@ -51,19 +51,19 @@ class sprite {
 }}
 
 
-function tyngdekraft_1(spiller) { // orginal tyngdekraft funksjon
-    for (let bakke of bakkeArr) {
-        if (crash(spiller, bakke)) {
-            spiller.iLuften = true;
-            spiller.y = bakke.y - (spiller.height);
-        } else {
-            spiller.iLuften = false;
-        }
-    }
-    if (spiller.iLuften) {
-        spiller.yv = 0;
-    } else {spiller.yv += 0.5;}
-};
+// function tyngdekraft_1(spiller) { // orginal tyngdekraft funksjon
+//     for (let bakke of bakkeArr) {
+//         if (crash(spiller, bakke)) {
+//             spiller.iLuften = true;
+//             spiller.y = bakke.y - (spiller.height);
+//         } else {
+//             spiller.iLuften = false;
+//         }
+//     }
+//     if (spiller.iLuften) {
+//         spiller.yv = 0;
+//     } else {spiller.yv += 0.5;}
+// };
 
 function tyngdekraft(spiller) { //tyngdekraft versjon 2
     spiller.iLuften = bakkeArr.every(sjekk);
@@ -71,18 +71,20 @@ function tyngdekraft(spiller) { //tyngdekraft versjon 2
     function sjekk(denne) {
         let denneResultat = touching(spiller, denne);
 
+        if (denneResultat == 'topp') {
+            spiller.yv = 0;
+        }
+        if (denneResultat == 'høyre') {
+            spiller.x = denne.x - (spiller.width);
+        }
+        if (denneResultat == 'venstre') {
+            spiller.x = denne.x + (denne.width);
+        }
         if (denneResultat == 'bunn') {
             spiller.y = denne.y - (spiller.height);
             return false;
-        } else if (denneResultat == 'topp') {
-            spiller.y = denne.y + (denne.height);
-            return true;
-        } else if (denneResultat == 'høyre') {
-            spiller.x = denne.x - (spiller.width);
-            return true;
-        } else if (denneResultat == 'venstre') {
-            spiller.x = denne.x + (denne.width);
         } else {return true;}
+        
     }
 
     if (!spiller.iLuften) {
@@ -91,6 +93,7 @@ function tyngdekraft(spiller) { //tyngdekraft versjon 2
 };
 
 function touching(sprite1, sprite2) {
+    let bunn = true;
     if (sprite1.x + sprite1.width > sprite2.x && sprite1.x < sprite2.x + sprite2.width && 
         sprite1.y + sprite1.height > sprite2.y && sprite1.y < sprite2.y + sprite2.height) {
         
@@ -99,16 +102,24 @@ function touching(sprite1, sprite2) {
         // if (sprite1.y + sprite1.height < sprite2.y + 5) {
         //     return 'bunn';
         // } else 
-        if (sprite1.y > sprite2.y + sprite2.height - 5) {
+
+        // bunn = true;
+        if (sprite1.y > sprite2.y + sprite2.height - 10) {
+            // bunn = false;
             console.log('topp')
             return 'topp'
-        } else if (sprite1.x + sprite1.width < sprite2.x + 5) {
+        }
+        if (sprite1.x + sprite1.width < sprite2.x + 5) {
+            // bunn = false;
             console.log('høyre')
             return 'høyre';
-        } else if (sprite1.x > sprite2.x + sprite2.width - 5) {
+        }
+        if (sprite1.x > sprite2.x + sprite2.width - 5) {
+            // bunn = false;
             console.log('venstre')
             return 'venstre';
-        } else {
+        } 
+        if (sprite1.y + sprite1.height < sprite2.y + 15) {
             console.log('bunn')
             return 'bunn';
         }
@@ -126,7 +137,7 @@ spritesheetRød.src = 'bilder/Flosshattmann.png';
 const bakkeBilde = new Image();
 bakkeBilde.src = 'bilder/bakke-1.0.png';
 
-let grønn = new sprite(10, 0, 90, 210.15, 250, 250, 100, 210, 0, 0, 0.5, true, false, true, spritesheetGrønn);
+let grønn = new sprite(10, 0, 90, 210, 250, 250, 100, 210, 0, 0, 0.5, true, false, true, spritesheetGrønn);
 let rød = new sprite(0, 0, 100, 100, 350, 350, 150, 150, 0, 0, 0.5, true, false, true, spritesheetRød);
 
 let bakkeArr = []
@@ -139,9 +150,10 @@ function nyBakke(x, y, lengde) {
     bakkeArr.push(new sprite(0, 0, lengde, 100, x, y, lengde, 100, 0, 0, 0, false, false, false, bakkeBilde))
 }
 
-nyBakke(200, 450, 200)//opretter bakke-blokker
-nyBakke(-50, 550, 10000)
-nyBakke(550, 200, 100)
+nyBakke(200, 500, 200)//opretter bakke-blokker
+nyBakke(200, 500, 200)
+nyBakke(-100, 550, 1100)
+nyBakke(450, 200, 100)
 
 //------------KNAPPER-------------
 
@@ -255,3 +267,10 @@ function loop() {
     requestAnimationFrame(loop)
 }
 loop();
+
+if (localStorage.antallBesok) {
+    localStorage.antallBesok = Number(localStorage.antallBesok) + 1;
+} else {
+    localStorage.antallBesok = 1;
+}
+console.log(localStorage.antallBesok);
