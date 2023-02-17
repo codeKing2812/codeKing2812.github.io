@@ -1,0 +1,48 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+.hoved {
+    width: 100%;
+    height: auto;
+    background-color: #fff6ee;
+    display: grid;
+    gap: 5px;
+    box-sizing: border-box;
+    padding: 10%;
+
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    grid-template-areas: 
+    'to to to to to to to to to to to to'
+    
+    'd1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1'
+    'd1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1'
+    'd1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1 d1'
+
+    'd2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2'
+    'd2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2'
+    'd2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2 d2'
+
+    'd3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3'
+    'd3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3'
+    'd3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3 d3';
+}
+#topp {grid-area: to;}
+#del1 {grid-area: d1;}
+#del2 {grid-area: d2;}
+#del3 {grid-area: d3;}
+
+#topp {
+    display: flex;
+    justify-content: space-between;
+}
+img {
+    height: 100px;
+}
+h1 {
+    margin: 5px;
+    padding: 5px;
+}
