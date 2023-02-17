@@ -119,7 +119,7 @@ function touching(sprite1, sprite2) {
             console.log('venstre')
             return 'venstre';
         } 
-        if (sprite1.y + sprite1.height < sprite2.y + 15) {
+        if (sprite1.y + sprite1.height < sprite2.y + 10) {
             console.log('bunn')
             return 'bunn';
         }
