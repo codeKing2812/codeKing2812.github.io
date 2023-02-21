@@ -7,11 +7,11 @@ html, body {
 .hoved {
     width: 100%;
     height: auto;
-    background-color: #fff6ee;
+    background-color: #fff5e3;
     display: grid;
     gap: 5px;
     box-sizing: border-box;
-    padding: 10%;
+    padding: 5%;
 
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: repeat(10, 1fr);
