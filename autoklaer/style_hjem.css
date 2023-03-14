@@ -4,6 +4,12 @@ html, body {
     width: 100%;
     height: 100%;
 }
+/* Fjerner scrollbars for body */
+.body::-webkit-scrollbar{
+    display: none; 
+}
+
+
 .hoved {
     width: 100%;
     height: auto;
@@ -39,6 +45,23 @@ html, body {
     display: flex;
     justify-content: space-between;
 }
+
+/* Fjerner scrollbars for info-delene */
+.info::-webkit-scrollbar{
+    display: none; 
+}
+.info {
+    display: flex;
+    height: auto;
+    overflow-x: scroll;
+}
+.infoBoks {
+    margin: 2px;
+    padding: 1px;
+    border: 2px solid #6f784c;
+    border-radius: 5px;
+}
+
 img {
     height: 100px;
 }
