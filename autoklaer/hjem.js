@@ -99,30 +99,7 @@ function leggTilPlagg() {
 
 //------------------------------VÆRMELDING
 
-// let værFelt = document.createElement('p');
-// info2.appendChild(værFelt);
-
-fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lon=5.3242')
-    .then(response => response.json())
-    // .then(response => console.log(response))
-    .then(response => værmelding(response))
-    .catch(err => console.error(err))
-
-function værmelding(metApi) {
-    let værTime = metApi.properties.timeseries;
-    for (let i = 0; i < 12; i++) {
-        let div = document.createElement('div');
-        div.setAttribute('class', 'infoBoks');
-        info2.appendChild(div);
-        div.innerText += (værTime[i].time.substr(11,5))
-        div.innerHTML += ('<br>')
-        div.innerText += (værTime[i].data.next_1_hours.details.precipitation_amount + 'mm')
-        div.innerHTML += ('<br>')
-        div.innerText += (værTime[i].data.instant.details.air_temperature + '°')
-    }
-};
-
-const weatherSymbols = {
+const weatherSymbols = { // VÆRSYMBOLER
     clearsky_day: '01d',
     clearsky_night: '01n',
     clearsky_polartwilight: '01m',
@@ -207,3 +184,34 @@ const weatherSymbols = {
     lightsnow: '49',
     heavysnow: '50',
 };
+
+
+// ---------------------- API
+
+fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lon=5.3242')
+    .then(response => response.json())
+    // .then(response => console.log(response))
+    .then(response => værmelding(response))
+    .catch(err => console.error(err))
+
+function værmelding(metApi) {
+    let værTime = metApi.properties.timeseries;
+    for (let i = 0; i < 12; i++) {
+        let div = document.createElement('div');
+        div.setAttribute('class', 'infoBoks');
+        info2.appendChild(div);
+
+        let symbol = String(værTime[i].data.next_1_hours.summary.symbol_code);
+        console.log(symbol)
+        console.log(weatherSymbols.symbol)
+
+        div.innerText += (værTime[i].time.substr(11,5))
+        div.innerHTML += ('<br>')
+        div.innerText += (værTime[i].data.next_1_hours.summary.symbol_code)
+        div.innerHTML += ('<br>')
+        div.innerText += (værTime[i].data.next_1_hours.details.precipitation_amount + 'mm')
+        div.innerHTML += ('<br>')
+        div.innerText += (værTime[i].data.instant.details.air_temperature + '°')
+    }
+};
+
