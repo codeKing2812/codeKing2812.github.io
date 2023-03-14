@@ -60,11 +60,13 @@ html, body {
     margin: 2px;
     padding: 1px;
     border: 2px solid #6f784c;
-    border-radius: 5px;
+    border-radius: 10px;
 
-    flex-basis: 60px;
+    flex-basis: 80px;
 	flex-grow: 0;
 	flex-shrink: 0;
+
+    text-align: center;
 }
 
 img {
