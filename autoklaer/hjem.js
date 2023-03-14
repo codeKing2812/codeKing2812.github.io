@@ -97,7 +97,7 @@ function leggTilPlagg() {
 
 
 
-//                      VÆRMELDING
+//------------------------------VÆRMELDING
 
 // let værFelt = document.createElement('p');
 // info2.appendChild(værFelt);
@@ -111,9 +111,11 @@ fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lo
 function værmelding(metApi) {
     let værTime = metApi.properties.timeseries;
     for (let i = 0; i < 12; i++) {
-        let p = document.createElement('p');
-        p.setAttribute('class', 'infoBoks');
-        info2.appendChild(p);
-        p.innerText = ('Temperaturen kl ' + værTime[i].time.substr(11,5) + ' blir ' + værTime[i].data.instant.details.air_temperature + ' grader')
+        let div = document.createElement('div');
+        div.setAttribute('class', 'infoBoks');
+        info2.appendChild(div);
+        div.innerText += (værTime[i].time.substr(11,5))
+        div.innerHTML += ('<br>')
+        div.innerText += (værTime[i].data.instant.details.air_temperature + '°')
     }
 };
