@@ -18,42 +18,39 @@ const del2 = document.querySelector('#del2')
 const del3 = document.querySelector('#del3')
 const nyttPlagg = document.querySelector('#nyttPlagg')
 
-
-let klesskap = document.createElement('p');
-del3.appendChild(klesskap);
-
-//hent data fra firebase
-function hentPlagg() {
+//hent data fra firebase og oppdater listen over klær i klesskapet
+function oppdaterPlagg() {
     db.collection("Klær").get().then((snapshot) => {
         let alleKlaer = snapshot.docs;
     
         console.log(alleKlaer);
-        klesskap.innerText = '';
+        info3.innerText = '';
         for (let plagg of alleKlaer) {
             let p = document.createElement('p');
-            klesskap.appendChild(p);
+            p.setAttribute('class', 'infoBoks');
+            info3.appendChild(p);
             p.innerText = plagg.data().farge + ' ' + plagg.data().type + ' av ' + plagg.data().stoff;
         }
     });
 };
-hentPlagg();
+oppdaterPlagg();
 
 //legg til data til firebase
 nyttPlagg.addEventListener('click', leggTilPlagg);
 function leggTilPlagg() {
 
     let navn = document.createElement('label');
-    del3.appendChild(navn);
+    info3.appendChild(navn);
     navn.innerText = 'type: ';
 
     let typeFelt = document.createElement('input');
-    del3.appendChild(typeFelt);
+    info3.appendChild(typeFelt);
 
     let fargeFelt = document.createElement('input');
-    del3.appendChild(fargeFelt);
+    info3.appendChild(fargeFelt);
     
     let stoffFelt = document.createElement('input');
-    del3.appendChild(stoffFelt);
+    info3.appendChild(stoffFelt);
 
     let typeIn = '';
     let fargeIn = '';
@@ -93,7 +90,7 @@ function leggTilPlagg() {
                 farge: fargeIn,
                 stoff: stoffIn
             });
-            hentPlagg();
+            oppdaterPlagg();
         }
     })
 }
@@ -102,8 +99,8 @@ function leggTilPlagg() {
 
 //                      VÆRMELDING
 
-let værFelt = document.createElement('p');
-del2.appendChild(værFelt);
+// let værFelt = document.createElement('p');
+// info2.appendChild(værFelt);
 
 fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lon=5.3242')
     .then(response => response.json())
@@ -113,9 +110,10 @@ fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lo
 
 function værmelding(metApi) {
     let værTime = metApi.properties.timeseries;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 12; i++) {
         let p = document.createElement('p');
-        værFelt.appendChild(p);
+        p.setAttribute('class', 'infoBoks');
+        info2.appendChild(p);
         p.innerText = ('Temperaturen kl ' + værTime[i].time.substr(11,5) + ' blir ' + værTime[i].data.instant.details.air_temperature + ' grader')
     }
 };
