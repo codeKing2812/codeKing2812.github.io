@@ -35,21 +35,36 @@ function oppdaterPlagg() {
 };
 oppdaterPlagg();
 
+function nyOption (felt, option) { // en funksjon for å legge til options i en form
+    let z = document.createElement('option');
+    z.setAttribute('value', option);  
+    felt.appendChild(z);
+    let t = document.createTextNode(option);
+    z.appendChild(t);
+}
+
 //legg til data til firebase
 nyttPlagg.addEventListener('click', leggTilPlagg);
 function leggTilPlagg() {
 
-    let navn = document.createElement('label');
-    info3.appendChild(navn);
-    navn.innerText = 'type: ';
+    // let navn = document.createElement('label');
+    // info3.appendChild(navn);
+    // navn.innerText = 'type: ';
 
-    let typeFelt = document.createElement('input');
+    let typeFelt = document.createElement("select");
     info3.appendChild(typeFelt);
 
-    let fargeFelt = document.createElement('input');
+    nyOption(typeFelt, 't-skjorte');
+    nyOption(typeFelt, 'genser');
+    nyOption(typeFelt, 'ytterjakke');
+    nyOption(typeFelt, 'bukse');
+    nyOption(typeFelt, 'sko');
+
+
+    let fargeFelt = document.createElement('select');
     info3.appendChild(fargeFelt);
     
-    let stoffFelt = document.createElement('input');
+    let stoffFelt = document.createElement('select');
     info3.appendChild(stoffFelt);
 
     let typeIn = '';
@@ -93,11 +108,11 @@ function leggTilPlagg() {
             oppdaterPlagg();
         }
     })
-}
+};
 
 
 
-//------------------------------VÆRMELDING
+//------------------------------VÆRMELDING------------------------------------------
 
 const weatherSymbols = { // VÆRSYMBOLER
     clearsky_day: '01d',
@@ -185,7 +200,7 @@ const weatherSymbols = { // VÆRSYMBOLER
     heavysnow: '50',
 };
 
-// ---------------------- API
+//  API
 
 fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lon=5.3242')
     .then(response => response.json())
@@ -211,7 +226,7 @@ function værmelding(metApi) {
         div.appendChild(tid);
         tid.innerText = (værTime[i].time.substr(11,5))
         
-        let img = document.createElement('IMG');
+        let img = document.createElement('img');
         img.setAttribute('src', 'Bilder/værsymboler/' + weatherSymbols[symbol] + '.png');
         img.setAttribute('class', 'værsymboler')
         div.appendChild(img);
