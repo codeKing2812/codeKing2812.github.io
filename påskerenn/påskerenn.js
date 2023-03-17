@@ -16,7 +16,7 @@ let personer = [
 oppdaterDeltakerListe();
 
 function nyPerson(event) {
-    event.preventDefault(); // single page app som betyr at vi ikke forlater nettsiden
+    event.preventDefault(); //ikke forlat nettsiden
     let innNavn = document.querySelector('#navn').value;
     let innAlder = document.querySelector('#alder').value;
     personer.push({navn: innNavn, alder: innAlder, akt1: 0, akt2: 0, akt3: 0, tot: 0});
@@ -33,7 +33,7 @@ function oppdaterDeltakerListe() {
         person.tot = person.akt1 + person.akt2 + person.akt3;
         rad.innerHTML += '<td>' + person.navn + '</td>' + '<td>' + person.alder + '</td>' + '<td>' + person.akt1 + '</td>' + '<td>' + person.akt2 + '</td>' + '<td>' + person.akt3 + '</td>' + '<td>' + person.tot + '</td>';
     };
-    console.log(personer);
+    console.log(personer); 
 };
 
 function slettForrige() {
