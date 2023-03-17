@@ -185,7 +185,6 @@ const weatherSymbols = { // VÆRSYMBOLER
     heavysnow: '50',
 };
 
-
 // ---------------------- API
 
 fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lon=5.3242')
@@ -195,23 +194,35 @@ fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lo
     .catch(err => console.error(err))
 
 function værmelding(metApi) {
+
     let værTime = metApi.properties.timeseries;
+
     for (let i = 0; i < 12; i++) {
+
         let div = document.createElement('div');
         div.setAttribute('class', 'infoBoks');
         info2.appendChild(div);
+        
+        let symbol = værTime[i].data.next_1_hours.summary.symbol_code;
+        console.log(weatherSymbols[symbol]);
 
-        let symbol = String(værTime[i].data.next_1_hours.summary.symbol_code);
-        console.log(symbol)
-        console.log(weatherSymbols.symbol)
 
-        div.innerText += (værTime[i].time.substr(11,5))
-        div.innerHTML += ('<br>')
-        div.innerText += (værTime[i].data.next_1_hours.summary.symbol_code)
-        div.innerHTML += ('<br>')
-        div.innerText += (værTime[i].data.next_1_hours.details.precipitation_amount + 'mm')
-        div.innerHTML += ('<br>')
-        div.innerText += (værTime[i].data.instant.details.air_temperature + '°')
+        let tid = document.createElement('p');
+        div.appendChild(tid);
+        tid.innerText = (værTime[i].time.substr(11,5))
+        
+        let img = document.createElement('IMG');
+        img.setAttribute('src', 'Bilder/værsymboler/' + weatherSymbols[symbol] + '.png');
+        img.setAttribute('class', 'værsymboler')
+        div.appendChild(img);
+
+        let nedbør = document.createElement('p');
+        div.appendChild(nedbør);
+        nedbør.innerText = (værTime[i].data.next_1_hours.details.precipitation_amount + 'mm')
+        
+        let temp = document.createElement('p');
+        div.appendChild(temp);
+        temp.innerText = (værTime[i].data.instant.details.air_temperature + '°')
     }
 };
 
