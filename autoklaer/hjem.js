@@ -1,3 +1,29 @@
+//henter HTML elementer
+const topp = document.querySelector('#topp');
+const del1 = document.querySelector('#del1');
+const del2 = document.querySelector('#del2');
+const del3 = document.querySelector('#del3');
+
+//                                  A
+//                                  I
+//                               GENERELL
+//--------------------------------------------------------------------------------------------------------
+//                               ANBEFALINGER
+//                                  I
+//                                  V
+
+
+
+
+//                                  A
+//                                  I
+//                             ANBEFALINGER
+//--------------------------------------------------------------------------------------------------------
+//                               KLESSKAP
+//                                  I
+//                                  V
+
+
 const firebaseConfig = {
     apiKey: "AIzaSyCHe_tP28D20pYDcd7hpnYQX0bSlv6GvP0",
     authDomain: "autoklaer.firebaseapp.com",
@@ -11,29 +37,42 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 let db = firebase.firestore();
 
-//hent HTML elementer
-const topp = document.querySelector('#topp')
-const del1 = document.querySelector('#del1')
-const del2 = document.querySelector('#del2')
-const del3 = document.querySelector('#del3')
-const nyttPlagg = document.querySelector('#nyttPlagg')
+// lager den første diven i rekken av klær for å kunne ha annen info
+let førsteDiv = document.createElement('div');
+førsteDiv.setAttribute('class', 'infoBoks');
 
-//hent data fra firebase og oppdater listen over klær i klesskapet
+// lager pluss-knappen for å legge til nye plagg, uten å legge den inn i info3
+let nyttPlagg = document.createElement('button');
+nyttPlagg.setAttribute('id', 'nyttPlagg')
+nyttPlagg.innerText = '+';
+
+// hent data fra firebase og oppdater listen over klær i klesskapet
 function oppdaterPlagg() {
     db.collection("Klær").get().then((snapshot) => {
+
         let alleKlaer = snapshot.docs;
-    
         console.log(alleKlaer);
-        info3.innerText = '';
+
+        info3.innerHTML = '';
+        førsteDiv.innerHTML = '';
+
+        info3.appendChild(førsteDiv); // legger pluss-knappen inn først i rekken
+        førsteDiv.appendChild(nyttPlagg);
+
         for (let plagg of alleKlaer) {
-            let p = document.createElement('p');
-            p.setAttribute('class', 'infoBoks');
-            info3.appendChild(p);
-            p.innerText = plagg.data().farge + ' ' + plagg.data().type + ' av ' + plagg.data().stoff;
+            let div = document.createElement('div');
+            div.setAttribute('class', 'infoBoks');
+            info3.appendChild(div);
+            div.innerText += plagg.data().type + ' av ' + plagg.data().stoff;
+            div.innerHTML += '<span><p id="klesfarge1" style="background-color:' + plagg.data().farge1 + '">&nbsp;</p>' +
+            '<p id="klesfarge2" style="background-color:' + plagg.data().farge2 + '">&nbsp;</p></span>';
         }
     });
 };
 oppdaterPlagg();
+
+
+
 
 function nyOption (felt, option) { // en funksjon for å legge til options i en form
     let z = document.createElement('option');
@@ -47,72 +86,101 @@ function nyOption (felt, option) { // en funksjon for å legge til options i en 
 nyttPlagg.addEventListener('click', leggTilPlagg);
 function leggTilPlagg() {
 
-    // let navn = document.createElement('label');
-    // info3.appendChild(navn);
-    // navn.innerText = 'type: ';
+    førsteDiv.innerHTML = '';
 
-    let typeFelt = document.createElement("select");
-    info3.appendChild(typeFelt);
+    let typeVelger = document.createElement('select');
+    førsteDiv.appendChild(typeVelger);
 
-    nyOption(typeFelt, 't-skjorte');
-    nyOption(typeFelt, 'genser');
-    nyOption(typeFelt, 'ytterjakke');
-    nyOption(typeFelt, 'bukse');
-    nyOption(typeFelt, 'sko');
+    nyOption(typeVelger, 't-skjorte');
+    nyOption(typeVelger, 'genser');
+    nyOption(typeVelger, 'ytterjakke');
+    nyOption(typeVelger, 'bukse');
+    nyOption(typeVelger, 'sko');
 
+    let fargeVelger1 = document.createElement('input');
+    fargeVelger1.setAttribute('type', 'color');
+    fargeVelger1.innerText = 'farge';
+    førsteDiv.appendChild(fargeVelger1);
 
-    let fargeFelt = document.createElement('select');
-    info3.appendChild(fargeFelt);
+    let fargeVelger2 = document.createElement('input');
+    fargeVelger2.setAttribute('type', 'color');
+    fargeVelger2.innerText = 'farge';
+    førsteDiv.appendChild(fargeVelger2);
     
-    let stoffFelt = document.createElement('select');
-    info3.appendChild(stoffFelt);
+    let stoffVelger = document.createElement('select');
+    førsteDiv.appendChild(stoffVelger);
 
-    let typeIn = '';
-    let fargeIn = '';
-    let stoffIn = '';
+    nyOption(stoffVelger, 'bomull')
+    nyOption(stoffVelger, 'ull')
+    nyOption(stoffVelger, 'kordfløyel')
+    nyOption(stoffVelger, 'dongeri')
+    nyOption(stoffVelger, 'skinn')
+    nyOption(stoffVelger, 'fleece')
+    nyOption(stoffVelger, 'regnstoff')
 
-    typeFelt.focus();
+    let sendKnapp = document.createElement('button');
+    sendKnapp.innerText = 'lagre';
+    førsteDiv.appendChild(sendKnapp);
 
-    typeFelt.addEventListener('keydown', function(e) {
-        if(e.key == 'Enter'){
-            console.log('type: ' + typeFelt.value)
-            typeIn = typeFelt.value;
-            navn.innerText = 'farge: ';
-            fargeFelt.focus();
-        }
-    })
-
-    fargeFelt.addEventListener('keydown', function(e) {
-        if(e.key == 'Enter'){
-            console.log('farge: ' + fargeFelt.value)
-            fargeIn = fargeFelt.value;
-            navn.innerText = 'stoff: ';
-            stoffFelt.focus();
-        }
-    })
-
-    stoffFelt.addEventListener('keydown', function(e) {
-        if(e.key == 'Enter'){
-            stoffIn = stoffFelt.value;
-            navn.innerText = ' ';
-            stoffFelt.blur();
-            typeFelt.value = '';
-            fargeFelt.value = '';
-            stoffFelt.value = '';
-
-            db.collection("Klær").add({
-                type: typeIn,
-                farge: fargeIn,
-                stoff: stoffIn
-            });
-            oppdaterPlagg();
-        }
+    sendKnapp.addEventListener('click',function () {
+        db.collection("Klær").add({
+            type: typeVelger.value,
+            farge1: fargeVelger1.value,
+            farge2: fargeVelger2.value,
+            stoff: stoffVelger.value
+        });
+        oppdaterPlagg();
     })
 };
 
 
+//                                  A
+//                                  I
+//                               KLESSKAP
+//--------------------------------------------------------------------------------------------------------
+//                              VÆRMELDING
+//                                  I
+//                                  V
 
-//------------------------------VÆRMELDING------------------------------------------
+
+//  API
+fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lon=5.3242')
+    .then(response => response.json())
+    // .then(response => console.log(response))
+    .then(response => værmelding(response))
+    .catch(err => console.error(err))
+
+function værmelding(metApi) {
+
+    let værTime = metApi.properties.timeseries;
+
+    for (let i = 0; i < 16; i++) {
+
+        let div = document.createElement('div');
+        div.setAttribute('class', 'infoBoks');
+        info2.appendChild(div);
+        
+        let symbol = værTime[i].data.next_1_hours.summary.symbol_code;
+        console.log(weatherSymbols[symbol]);
+
+        let tid = document.createElement('p');
+        div.appendChild(tid);
+        tid.innerText = (værTime[i].time.substr(11,5))
+        
+        let img = document.createElement('img');
+        img.setAttribute('src', 'Bilder/værsymboler/' + weatherSymbols[symbol] + '.png');
+        img.setAttribute('class', 'værsymboler')
+        div.appendChild(img);
+
+        let nedbør = document.createElement('p');
+        div.appendChild(nedbør);
+        nedbør.innerText = (værTime[i].data.next_1_hours.details.precipitation_amount + 'mm')
+        
+        let temp = document.createElement('p');
+        div.appendChild(temp);
+        temp.innerText = (værTime[i].data.instant.details.air_temperature + '°')
+    }
+};
 
 const weatherSymbols = { // VÆRSYMBOLER
     clearsky_day: '01d',
@@ -199,45 +267,3 @@ const weatherSymbols = { // VÆRSYMBOLER
     lightsnow: '49',
     heavysnow: '50',
 };
-
-//  API
-
-fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lon=5.3242')
-    .then(response => response.json())
-    // .then(response => console.log(response))
-    .then(response => værmelding(response))
-    .catch(err => console.error(err))
-
-function værmelding(metApi) {
-
-    let værTime = metApi.properties.timeseries;
-
-    for (let i = 0; i < 12; i++) {
-
-        let div = document.createElement('div');
-        div.setAttribute('class', 'infoBoks');
-        info2.appendChild(div);
-        
-        let symbol = værTime[i].data.next_1_hours.summary.symbol_code;
-        console.log(weatherSymbols[symbol]);
-
-
-        let tid = document.createElement('p');
-        div.appendChild(tid);
-        tid.innerText = (værTime[i].time.substr(11,5))
-        
-        let img = document.createElement('img');
-        img.setAttribute('src', 'Bilder/værsymboler/' + weatherSymbols[symbol] + '.png');
-        img.setAttribute('class', 'værsymboler')
-        div.appendChild(img);
-
-        let nedbør = document.createElement('p');
-        div.appendChild(nedbør);
-        nedbør.innerText = (værTime[i].data.next_1_hours.details.precipitation_amount + 'mm')
-        
-        let temp = document.createElement('p');
-        div.appendChild(temp);
-        temp.innerText = (værTime[i].data.instant.details.air_temperature + '°')
-    }
-};
-
