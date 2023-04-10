@@ -63,9 +63,14 @@ function oppdaterPlagg() {
             let div = document.createElement('div');
             div.setAttribute('class', 'infoBoks');
             info3.appendChild(div);
-            div.innerText += plagg.data().type + ' av ' + plagg.data().stoff;
-            div.innerHTML += '<span><p id="klesfarge1" style="background-color:' + plagg.data().farge1 + '">&nbsp;</p>' +
-            '<p id="klesfarge2" style="background-color:' + plagg.data().farge2 + '">&nbsp;</p></span>';
+
+            let plaggTekst = document.createElement('p');
+            div.appendChild(plaggTekst);
+            plaggTekst.setAttribute('class', 'plaggTekst');
+            plaggTekst.innerText = plagg.data().type + ' av ' + plagg.data().stoff;
+
+            div.innerHTML += '<div id="klesfarge1" style="background-color:' + plagg.data().farge1 + '">&nbsp;'
+            + '<div id="klesfarge2" style="background-color:' + plagg.data().farge2 + '"></div> </div>';
         }
     });
 };
@@ -88,25 +93,27 @@ function leggTilPlagg() {
 
     førsteDiv.innerHTML = '';
 
+    let typeTekst = document.createElement('p');
+    førsteDiv.appendChild(typeTekst);
+    typeTekst.setAttribute('class', 'skjemaTekst');
+    typeTekst.innerText = 'Type plagg:';
+
     let typeVelger = document.createElement('select');
     førsteDiv.appendChild(typeVelger);
 
     nyOption(typeVelger, 't-skjorte');
     nyOption(typeVelger, 'genser');
+    nyOption(typeVelger, 'skjorte');
     nyOption(typeVelger, 'ytterjakke');
     nyOption(typeVelger, 'bukse');
     nyOption(typeVelger, 'sko');
 
-    let fargeVelger1 = document.createElement('input');
-    fargeVelger1.setAttribute('type', 'color');
-    fargeVelger1.innerText = 'farge';
-    førsteDiv.appendChild(fargeVelger1);
 
-    let fargeVelger2 = document.createElement('input');
-    fargeVelger2.setAttribute('type', 'color');
-    fargeVelger2.innerText = 'farge';
-    førsteDiv.appendChild(fargeVelger2);
-    
+    let stoffTekst = document.createElement('p');
+    førsteDiv.appendChild(stoffTekst);
+    stoffTekst.setAttribute('class', 'skjemaTekst');
+    stoffTekst.innerText = 'Stofftype:';
+
     let stoffVelger = document.createElement('select');
     førsteDiv.appendChild(stoffVelger);
 
@@ -116,7 +123,30 @@ function leggTilPlagg() {
     nyOption(stoffVelger, 'dongeri')
     nyOption(stoffVelger, 'skinn')
     nyOption(stoffVelger, 'fleece')
-    nyOption(stoffVelger, 'regnstoff')
+    nyOption(stoffVelger, 'glatt polyester')
+
+
+    let fargeVelger1Tekst = document.createElement('p');
+    førsteDiv.appendChild(fargeVelger1Tekst);
+    fargeVelger1Tekst.setAttribute('class', 'skjemaTekst');
+    fargeVelger1Tekst.innerText = 'Hovedfarge:';
+
+    let fargeVelger1 = document.createElement('input');
+    fargeVelger1.setAttribute('type', 'color');
+    fargeVelger1.innerText = 'farge';
+    førsteDiv.appendChild(fargeVelger1);
+
+
+    let fargeVelger2Tekst = document.createElement('p');
+    førsteDiv.appendChild(fargeVelger2Tekst);
+    fargeVelger2Tekst.setAttribute('class', 'skjemaTekst');
+    fargeVelger2Tekst.innerText = 'Andrefarge:';
+
+    let fargeVelger2 = document.createElement('input');
+    fargeVelger2.setAttribute('type', 'color');
+    fargeVelger2.innerText = 'farge';
+    førsteDiv.appendChild(fargeVelger2);
+    
 
     let sendKnapp = document.createElement('button');
     sendKnapp.innerText = 'lagre';

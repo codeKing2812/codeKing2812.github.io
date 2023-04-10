@@ -61,6 +61,7 @@ html, body {
     padding: 1px;
     border: 3px solid #6f784c;
     border-radius: 10px;
+    position: relative;
 
     flex-basis: 90px;
 	flex-grow: 0;
@@ -82,17 +83,32 @@ html, body {
 }
 
 #klesfarge1 {
-    position: relative;
-    height: 50%;
+    position: absolute;
+    height: 75%;
     width: 110%;
     left: -5%;
-    background: linear-gradient(to right, blue 50%, yellow 50%);
+    bottom: 0%;
+
 }
 #klesfarge2 {
     position: relative;
-    height: 50%;
-    width: 60%;
-    left: 50%;
+    left: 25%;
+    top: 0%;
+    
+    margin: 0;
+    border-radius: 50%;
+    width: 50%;
+    margin-bottom: 25%;
+    aspect-ratio: 1;
+}
+
+.plaggTekst {
+    margin-bottom: 0%;
+}
+
+.skjemaTekst {
+    margin: 0;
+    font-size: 0.9em;
 }
 
 .værsymboler {
@@ -105,7 +121,7 @@ html, body {
     height: 75px;
 }
 
-h1 {
+h1, h2 {
     margin: 5px;
     padding: 5px;
 
