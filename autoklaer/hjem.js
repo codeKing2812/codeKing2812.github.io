@@ -8,7 +8,7 @@ const del3 = document.querySelector('#del3');
 //                                  I
 //                               GENERELL
 //--------------------------------------------------------------------------------------------------------
-//                               ANBEFALINGER
+//                             ANBEFALINGER
 //                                  I
 //                                  V
 
@@ -36,6 +36,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 let db = firebase.firestore();
+
 
 // lager den første diven i rekken av klær for å kunne ha annen info
 let førsteDiv = document.createElement('div');
@@ -69,7 +70,11 @@ function oppdaterPlagg() {
             plaggTekst.setAttribute('class', 'plaggTekst');
             plaggTekst.innerText = plagg.data().type + ' av ' + plagg.data().stoff;
 
-            div.innerHTML += '<div id="klesfarge1" style="background-color:' + plagg.data().farge1 + '">&nbsp;'
+            // let f1 = document.createElement('p');
+            // f1.innerHTML = '&nbsp;';
+            // div.appendChild(f1);
+
+            div.innerHTML += '<div id="klesfarge1" style="background-color:' + plagg.data().farge1 + '"> &nbsp; '
             + '<div id="klesfarge2" style="background-color:' + plagg.data().farge2 + '"></div> </div>';
         }
     });

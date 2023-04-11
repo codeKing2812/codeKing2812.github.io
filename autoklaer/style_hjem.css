@@ -84,11 +84,10 @@ html, body {
 
 #klesfarge1 {
     position: absolute;
-    height: 75%;
+    height: 70%;
     width: 110%;
     left: -5%;
-    bottom: 0%;
-
+    top: 4.5em;
 }
 #klesfarge2 {
     position: relative;
@@ -103,7 +102,8 @@ html, body {
 }
 
 .plaggTekst {
-    margin-bottom: 0%;
+    margin: 0.5em;
+    margin-bottom: 3em;
 }
 
 .skjemaTekst {
