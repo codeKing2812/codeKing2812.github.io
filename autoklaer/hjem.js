@@ -4,20 +4,12 @@ const del1 = document.querySelector('#del1');
 const del2 = document.querySelector('#del2');
 const del3 = document.querySelector('#del3');
 
-//                                  A
-//                                  I
-//                               GENERELL
-//--------------------------------------------------------------------------------------------------------
-//                             ANBEFALINGER
-//                                  I
-//                                  V
-
 
 
 
 //                                  A
 //                                  I
-//                             ANBEFALINGER
+//                               GENERELT
 //--------------------------------------------------------------------------------------------------------
 //                               KLESSKAP
 //                                  I
@@ -69,10 +61,6 @@ function oppdaterPlagg() {
             div.appendChild(plaggTekst);
             plaggTekst.setAttribute('class', 'plaggTekst');
             plaggTekst.innerText = plagg.data().type + ' av ' + plagg.data().stoff;
-
-            // let f1 = document.createElement('p');
-            // f1.innerHTML = '&nbsp;';
-            // div.appendChild(f1);
 
             div.innerHTML += '<div id="klesfarge1" style="background-color:' + plagg.data().farge1 + '"> &nbsp; '
             + '<div id="klesfarge2" style="background-color:' + plagg.data().farge2 + '"></div> </div>';
@@ -172,6 +160,60 @@ function leggTilPlagg() {
 //                                  A
 //                                  I
 //                               KLESSKAP
+//--------------------------------------------------------------------------------------------------------
+//                             ANBEFALINGER
+//                                  I
+//                                  V
+
+
+function foreslåPlagg() {
+    db.collection("Klær").get().then((snapshot) => {
+
+        let alleKlaer = snapshot.docs;
+
+        info1.innerHTML = '';
+
+        const anbefalt = [];
+
+        while (anbefalt.length < 5) {
+            let kandidat = alleKlaer[( Math.floor(Math.random() * alleKlaer.length))];
+            
+            anbefalt.push(kandidat);
+            alleKlaer.splice(alleKlaer.indexOf(kandidat),1);
+            
+            for (i of alleKlaer) {
+                if (i.data().type === kandidat.data().type) {
+                    alleKlaer.splice(alleKlaer.indexOf(i),1);
+                } else if (i.data().type === kandidat.data().type) {
+                    
+                }
+            }
+
+            console.log(anbefalt[anbefalt.length-1].data().type);
+            console.log(alleKlaer)
+        }
+
+        for (let plagg of anbefalt) {
+            let div = document.createElement('div');
+            div.setAttribute('class', 'infoBoks');
+            info1.appendChild(div);
+
+            let plaggTekst = document.createElement('p');
+            div.appendChild(plaggTekst);
+            plaggTekst.setAttribute('class', 'plaggTekst');
+            plaggTekst.innerText = plagg.data().type + ' av ' + plagg.data().stoff;
+
+            div.innerHTML += '<div id="klesfarge1" style="background-color:' + plagg.data().farge1 + '"> &nbsp; '
+            + '<div id="klesfarge2" style="background-color:' + plagg.data().farge2 + '"></div> </div>';
+        }
+    });
+};
+foreslåPlagg();
+
+
+//                                  A
+//                                  I
+//                             ANBEFALINGER
 //--------------------------------------------------------------------------------------------------------
 //                              VÆRMELDING
 //                                  I
