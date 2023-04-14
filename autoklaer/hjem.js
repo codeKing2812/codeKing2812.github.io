@@ -5,8 +5,6 @@ const del2 = document.querySelector('#del2');
 const del3 = document.querySelector('#del3');
 
 
-
-
 //                                  A
 //                                  I
 //                               GENERELT
@@ -82,7 +80,7 @@ function nyOption (felt, option) { // en funksjon for å legge til options i en 
 
 //legg til data til firebase
 nyttPlagg.addEventListener('click', leggTilPlagg);
-function leggTilPlagg() {
+function leggTilPlagg() { 
 
     førsteDiv.innerHTML = '';
 
@@ -117,7 +115,7 @@ function leggTilPlagg() {
     nyOption(stoffVelger, 'skinn')
     nyOption(stoffVelger, 'fleece')
     nyOption(stoffVelger, 'glatt polyester')
-
+ 
 
     let fargeVelger1Tekst = document.createElement('p');
     førsteDiv.appendChild(fargeVelger1Tekst);
@@ -219,14 +217,31 @@ foreslåPlagg();
 //                                  I
 //                                  V
 
+let lat = 0;
+let lon = 0;
+
+function getLocation() { // finn posisjon for værmelding
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            lat = Math.floor(position.coords.latitude);
+            lon = Math.floor(position.coords.longitude);
+            console.log(lat, lon)
+            hentVær()
+        });
+    } else { 
+        alert("Programmet har ikke tilgang til din posisjon");
+}}
+getLocation();
+
 
 //  API
-fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3930&lon=5.3242')
+function hentVær() {
+fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=' + lat + '&lon=' + lon)
     .then(response => response.json())
     // .then(response => console.log(response))
     .then(response => værmelding(response))
     .catch(err => console.error(err))
-
+};
 function værmelding(metApi) {
 
     let værTime = metApi.properties.timeseries;
