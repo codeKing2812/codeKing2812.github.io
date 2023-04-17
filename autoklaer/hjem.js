@@ -223,8 +223,8 @@ let lon = 0;
 function getLocation() { // finn posisjon for værmelding
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            lat = Math.floor(position.coords.latitude);
-            lon = Math.floor(position.coords.longitude);
+            lat = position.coords.latitude;
+            lon = position.coords.longitude;
             console.log(lat, lon)
             hentVær()
         });
