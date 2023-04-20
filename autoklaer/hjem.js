@@ -13,8 +13,8 @@ const del3 = document.querySelector('#del3');
 //                                  I
 //                                  V
 
-
-const firebaseConfig = {
+ 
+const firebaseConfig = { // "starter" firebase
     apiKey: "AIzaSyCHe_tP28D20pYDcd7hpnYQX0bSlv6GvP0",
     authDomain: "autoklaer.firebaseapp.com",
     projectId: "autoklaer",
@@ -42,7 +42,6 @@ function oppdaterPlagg() {
     db.collection("Klær").get().then((snapshot) => {
 
         let alleKlaer = snapshot.docs;
-        console.log(alleKlaer);
 
         info3.innerHTML = '';
         førsteDiv.innerHTML = '';
@@ -76,7 +75,7 @@ function nyOption (felt, option) { // en funksjon for å legge til options i en 
     felt.appendChild(z);
     let t = document.createTextNode(option);
     z.appendChild(t);
-}
+};
 
 //legg til data til firebase
 nyttPlagg.addEventListener('click', leggTilPlagg);
@@ -173,23 +172,24 @@ function foreslåPlagg() {
 
         const anbefalt = [];
 
-        while (anbefalt.length < 5) {
+        while (alleKlaer.length > 0) {
             let kandidat = alleKlaer[( Math.floor(Math.random() * alleKlaer.length))];
-            
+            console.log('--- valgt: ' +kandidat.data().type)
+
             anbefalt.push(kandidat);
             alleKlaer.splice(alleKlaer.indexOf(kandidat),1);
-            
-            for (i of alleKlaer) {
-                if (i.data().type === kandidat.data().type) {
-                    alleKlaer.splice(alleKlaer.indexOf(i),1);
-                } else if (i.data().type === kandidat.data().type) {
-                    
-                }
-            }
 
-            console.log(anbefalt[anbefalt.length-1].data().type);
-            console.log(alleKlaer)
-        }
+            for (let i = 0; i < alleKlaer.length; i++) {
+                let plagg = alleKlaer[i];
+                console.log('igjen: ' + plagg.data().type);
+
+                if (plagg.data().type == kandidat.data().type) {
+                    i-=1;
+                    console.log('- fjernet ' + plagg.data().type);
+                    alleKlaer.splice(alleKlaer.indexOf(plagg),1);
+                };
+            };
+        };
 
         for (let plagg of anbefalt) {
             let div = document.createElement('div');
@@ -225,7 +225,6 @@ function getLocation() { // finn posisjon for værmelding
         navigator.geolocation.getCurrentPosition(function(position) {
             lat = position.coords.latitude;
             lon = position.coords.longitude;
-            console.log(lat, lon)
             hentVær()
         });
     } else { 
@@ -253,7 +252,6 @@ function værmelding(metApi) {
         info2.appendChild(div);
         
         let symbol = værTime[i].data.next_1_hours.summary.symbol_code;
-        console.log(weatherSymbols[symbol]);
 
         let tid = document.createElement('p');
         div.appendChild(tid);
