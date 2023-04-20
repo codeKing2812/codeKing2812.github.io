@@ -90,8 +90,44 @@ html, body {
     top: -5%;
     left: -5%;
 
-    font-size: 2.5em;
+    font-size: 2.8em;
     color: #544C76;;
+}
+
+.slettPlagg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 102%;
+    height: 102%;
+
+    font-family: sans-serif;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #a84040;
+    background-color: rgba(128, 128, 128, 0.6);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.byttPlagg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 102%;
+    height: 102%;
+
+    font-family: sans-serif;
+    font-size: 2.3em;
+    font-weight: 600;
+    color: #544C76;
+    background-color: rgba(128, 128, 128, 0.6);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #klesfarge1 {

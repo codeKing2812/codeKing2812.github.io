@@ -65,6 +65,22 @@ function oppdaterPlagg() {
 
             div.innerHTML += '<div id="klesfarge1" style="background-color:' + plagg.data().farge1 + '"> &nbsp; '
             + '<div id="klesfarge2" style="background-color:' + plagg.data().farge2 + '"></div> </div>';
+
+            let slettPlagg; // funksjonen for å slette plagg
+            div.addEventListener('mouseenter', function() {
+                slettPlagg = document.createElement('div');
+                slettPlagg.setAttribute('class', 'slettPlagg');
+                slettPlagg.innerText = 'X';
+                div.appendChild(slettPlagg);
+
+                slettPlagg.addEventListener('click', function() {
+                    db.collection("Klær").doc(plagg.id).delete();
+                    oppdaterPlagg();
+                });
+            });
+            div.addEventListener('mouseleave', function() {
+                div.removeChild(slettPlagg);1
+            });
         }
     });
 };
@@ -72,8 +88,7 @@ oppdaterPlagg();
 
 
 
-
-function nyOption (felt, option) { // en funksjon for å legge til options i en form
+function nyOption (felt, option) { // funksjon for å legge til options i et select element
     let z = document.createElement('option');
     z.setAttribute('value', option);  
     felt.appendChild(z);
@@ -81,7 +96,7 @@ function nyOption (felt, option) { // en funksjon for å legge til options i en 
     z.appendChild(t);
 };
 
-//legg til data til firebase
+//legg til nytt plagg
 nyttPlagg.addEventListener('click', leggTilPlagg);
 function leggTilPlagg() { 
 
@@ -166,38 +181,42 @@ function leggTilPlagg() {
 //                                  I
 //                                  V
 
+let spacer = document.createElement('div');
+spacer.setAttribute('class', 'spacerBoks');
+info1.appendChild(spacer); // legger inn spacer foran innholdet
 
-function foreslåPlagg() {
+function foreslåPlagg(type1, type2, type3, type4, type5, type6) {
+    let plaggTyper = [type1, type2, type3, type4, type5, type6];
+    plaggTyper = plaggTyper.filter(item => item); 
+    console.log(plaggTyper);
+    // lager en array med de ønskede typene klær
+
     db.collection("Klær").get().then((snapshot) => {
-
         let alleKlaer = snapshot.docs;
-
-        info1.innerHTML = '';
-
         const anbefalt = [];
 
-        while (alleKlaer.length > 0) {
+        let typeIndex = 0;
+        while (anbefalt.length < plaggTyper.length) {
             let kandidat = alleKlaer[( Math.floor(Math.random() * alleKlaer.length))];
-            console.log('--- valgt: ' +kandidat.data().type)
+
+            while (kandidat.data().type !== plaggTyper[typeIndex]) {
+                kandidat = alleKlaer[( Math.floor(Math.random() * alleKlaer.length))];
+            };
 
             anbefalt.push(kandidat);
             alleKlaer.splice(alleKlaer.indexOf(kandidat),1);
 
             for (let i = 0; i < alleKlaer.length; i++) {
-                let plagg = alleKlaer[i];
-                console.log('igjen: ' + plagg.data().type);
+                let igjen = alleKlaer[i];
 
-                if (plagg.data().type == kandidat.data().type) {
+                if (igjen.data().type == kandidat.data().type) {
                     i-=1;
-                    console.log('- fjernet ' + plagg.data().type);
-                    alleKlaer.splice(alleKlaer.indexOf(plagg),1);
+                    alleKlaer.splice(alleKlaer.indexOf(igjen),1);
                 };
             };
-        };
 
-        let spacer = document.createElement('div');
-        spacer.setAttribute('class', 'spacerBoks');
-        info1.appendChild(spacer); // legger inn spacer foran innholdet
+            typeIndex++;
+        };
 
         for (let plagg of anbefalt) {
             let div = document.createElement('div');
@@ -211,10 +230,27 @@ function foreslåPlagg() {
 
             div.innerHTML += '<div id="klesfarge1" style="background-color:' + plagg.data().farge1 + '"> &nbsp; '
             + '<div id="klesfarge2" style="background-color:' + plagg.data().farge2 + '"></div> </div>';
+        
+            let byttPlagg; //funksjon for å bytte ut plagg
+            div.addEventListener('mouseenter', function() {
+                byttPlagg = document.createElement('div');
+                byttPlagg.setAttribute('class', 'byttPlagg');
+                byttPlagg.innerHTML = '⥂';
+                div.appendChild(byttPlagg);
+
+                byttPlagg.addEventListener('click', function() {
+                    info1.removeChild(div);
+                    foreslåPlagg(plagg.data().type);
+                });
+            });
+            div.addEventListener('mouseleave', function() {
+                div.removeChild(byttPlagg);
+            });
         }
     });
 };
-foreslåPlagg();
+
+foreslåPlagg('t-skjorte', 'bukse', 'genser', 'skjorte', 'ytterjakke', 'sko');
 
 
 //                                  A
