@@ -232,7 +232,7 @@ function foreslåPlagg(type1, type2, type3, type4, type5, type6) {
             + '<div id="klesfarge2" style="background-color:' + plagg.data().farge2 + '"></div> </div>';
         
             let byttPlagg; //funksjon for å bytte ut plagg
-            div.addEventListener('mouseenter' || 'click', function() {
+            div.addEventListener('click', function() {
                 byttPlagg = document.createElement('div');
                 byttPlagg.setAttribute('class', 'byttPlagg');
                 byttPlagg.innerHTML = '⥂';
