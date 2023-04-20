@@ -46,6 +46,10 @@ function oppdaterPlagg() {
         info3.innerHTML = '';
         førsteDiv.innerHTML = '';
 
+        let spacer = document.createElement('div');
+        spacer.setAttribute('class', 'spacerBoks');
+        info3.appendChild(spacer); // legg til spacer foran innholdet
+
         info3.appendChild(førsteDiv); // legger pluss-knappen inn først i rekken
         førsteDiv.appendChild(nyttPlagg);
 
@@ -191,6 +195,10 @@ function foreslåPlagg() {
             };
         };
 
+        let spacer = document.createElement('div');
+        spacer.setAttribute('class', 'spacerBoks');
+        info1.appendChild(spacer); // legger inn spacer foran innholdet
+
         for (let plagg of anbefalt) {
             let div = document.createElement('div');
             div.setAttribute('class', 'infoBoks');
@@ -244,6 +252,10 @@ fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=' + lat + 
 function værmelding(metApi) {
 
     let værTime = metApi.properties.timeseries;
+
+    let spacer = document.createElement('div');
+    spacer.setAttribute('class', 'spacerBoks');
+    info2.appendChild(spacer); // legg til spacer foran innholdet
 
     for (let i = 0; i < 16; i++) {
 

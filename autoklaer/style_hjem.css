@@ -5,8 +5,12 @@ html, body {
     height: 100%;
 }
 /* Fjerner scrollbars for body */
-.body::-webkit-scrollbar{
-    display: none; 
+.body::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari and Opera */
+}
+.body {
+    -ms-overflow-style: none;  /* IE og Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 
@@ -53,7 +57,8 @@ html, body {
 .info {
     display: flex;
     height: auto;
-    width: 100%;
+    width: 110%;
+    margin-left: -5%;
     overflow-x: scroll;
 }
 .infoBoks {
@@ -63,7 +68,7 @@ html, body {
     border-radius: 10px;
     position: relative;
 
-    flex-basis: 90px;
+    flex-basis: 5.5em;
 	flex-grow: 0;
 	flex-shrink: 0;
 
@@ -71,6 +76,11 @@ html, body {
 
     text-align: center;
     overflow: hidden;
+}
+.spacerBoks {
+    flex-basis: 2em;
+	flex-grow: 0;
+	flex-shrink: 0;
 }
 
 #nyttPlagg {
