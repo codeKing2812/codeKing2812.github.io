@@ -79,7 +79,7 @@ function oppdaterPlagg() {
                 });
             });
             div.addEventListener('mouseleave', function() {
-                div.removeChild(slettPlagg);1
+                div.removeChild(slettPlagg);
             });
         }
     });
@@ -195,12 +195,14 @@ function foreslåPlagg(type1, type2, type3, type4, type5, type6) {
         let alleKlaer = snapshot.docs;
         const anbefalt = [];
 
+
         let typeIndex = 0;
         while (anbefalt.length < plaggTyper.length) {
             let kandidat = alleKlaer[( Math.floor(Math.random() * alleKlaer.length))];
 
             while (kandidat.data().type !== plaggTyper[typeIndex]) {
                 kandidat = alleKlaer[( Math.floor(Math.random() * alleKlaer.length))];
+                console.log('leter')
             };
 
             anbefalt.push(kandidat);
@@ -250,8 +252,6 @@ function foreslåPlagg(type1, type2, type3, type4, type5, type6) {
     });
 };
 
-foreslåPlagg('t-skjorte', 'bukse', 'genser', 'skjorte', 'ytterjakke', 'sko');
-
 
 //                                  A
 //                                  I
@@ -276,6 +276,9 @@ function getLocation() { // finn posisjon for værmelding
 }}
 getLocation();
 
+let allTemp = [];
+let allNedbør = [];
+
 
 //  API
 function hentVær() {
@@ -289,11 +292,20 @@ function værmelding(metApi) {
 
     let værTime = metApi.properties.timeseries;
 
+    let oppdatertVærTime = Number(metApi.properties.meta.updated_at.substr(11,2))
+    console.log(oppdatertVærTime)
+
     let spacer = document.createElement('div');
     spacer.setAttribute('class', 'spacerBoks');
     info2.appendChild(spacer); // legg til spacer foran innholdet
 
-    for (let i = 0; i < 16; i++) {
+    const iDag = new Date();
+    let time = iDag.getHours();
+    let tidsforskjell = time - oppdatertVærTime;
+    console.log(tidsforskjell)
+
+
+    for (let i = tidsforskjell; i < 24 + tidsforskjell; i++) {
 
         let div = document.createElement('div');
         div.setAttribute('class', 'infoBoks');
@@ -317,8 +329,26 @@ function værmelding(metApi) {
         let temp = document.createElement('p');
         div.appendChild(temp);
         temp.innerText = (værTime[i].data.instant.details.air_temperature + '°')
+
+        allNedbør.push(værTime[i].data.next_1_hours.details.precipitation_amount);
+        allTemp.push(værTime[i].data.instant.details.air_temperature);
     }
+
+    let maksNedbør = Math.max.apply(null, allNedbør)
+    let maksTemp= Math.max.apply(null, allTemp)
+    if (maksTemp < 14) {
+        foreslåPlagg('t-skjorte', 'bukse', 'sko', 'genser', 'ytterjakke');
+    } else if (maksTemp > 14 && maksTemp < 16) {
+        if (maksNedbør == 0) {
+            foreslåPlagg('t-skjorte', 'bukse', 'sko', 'skjorte');
+        } else {foreslåPlagg('t-skjorte', 'bukse', 'sko', 'genser', 'ytterjakke');}
+    } else if (maksTemp > 16) {
+        foreslåPlagg('t-skjorte', 'bukse', 'sko');
+    }
+
 };
+
+
 
 const weatherSymbols = { // VÆRSYMBOLER
     clearsky_day: '01d',
