@@ -1,6 +1,5 @@
 import os
 import time
-import math
 
 class design:
     HEADER = '\033[95m'
