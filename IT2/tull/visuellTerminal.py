@@ -13,59 +13,67 @@ class design:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+fargetpx = design.HEADER + 'o ' + design.END
 
-plass = 0
-def animerPikselrad(vertikal, plass):
+
+def piksel(x, y, farge):
+    if farge == 'l':
+        rader[y][x] =  (design.HEADER)
+    elif farge == 'b':
+        rader[y][x] =  (design.BLUE)
+    elif farge == 'g':
+        rader[y][x] =  (design.GREEN)
         
-        rad = rader[vertikal]
-        rad[plass] =  (design.HEADER + 'o ' + design.END)
-        # gjør pikselen lilla
-
-        
-        
-        pikselString = ''
-        for i in range(len(rad)):
-            pikselString += rad[i]
-        print(pikselString) # skriver ut raden
-
-        rad[plass] =  ('o ')
-        # gjør den vanlig igjen
+    rader[y][x] += ('o ' + design.END)
 
 
 
-        
-        
-
-rader = []
-for i in range(10):
-    rad = ['o ']*30
-    rader.append(rad)
-
+xpos = 0
+ypos = 0
 
 tid = time.time()
 for i in range(20):
-    plass = 0
     while time.time() < tid + 30:
         if time.time() > tid + 0.1: # kjør hvert tiendedels sekund
             
+            rader = []
+            for i in range(10):
+                rad = ['o ']*25
+                rader.append(rad)
+            # Reset alle rader
+
+
             os.system('cls')
-            tid += 0.1
+            tid += 0.1 
+            #refresh skjermen
+
             
             if keyboard.is_pressed('d'):
-                plass += 1
+                xpos += 1
             elif keyboard.is_pressed('a'):
-                plass -= 1
+                xpos -= 1
+            if keyboard.is_pressed('w'):
+                ypos -= 1
+            elif keyboard.is_pressed('s'):
+                ypos += 1
+            # bevegelse/key lytter
 
-            animerPikselrad(0, plass)
-            animerPikselrad(1, plass)
-            animerPikselrad(2, plass)
-            animerPikselrad(3, plass)
-            animerPikselrad(5, plass)
-            animerPikselrad(6, plass)
-            animerPikselrad(7, plass)
-            animerPikselrad(8, plass)
-            animerPikselrad(9, plass)
-            animerPikselrad(4, plass + 5)
+
+            # piksel(xpos+3, ypos, 'l')
+            # piksel(xpos+3, ypos+2, 'g')
+            #
+            #FUNKER IKKE (ENDA)
+
+            rader[ypos][xpos] =  (fargetpx)
+            rader[ypos+1][xpos+1] = (fargetpx)
+
+            
+            for rad in rader:
+                pikselString = ''
+                for piksel in rad:
+                    pikselString += piksel #lager en string av raden
+                print(pikselString) # skriver ut stringen
+                
 
 
 
