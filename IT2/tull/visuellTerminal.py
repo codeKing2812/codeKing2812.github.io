@@ -27,48 +27,114 @@ def tegn(x, y, farge):
 
 
 
-y1 = 0
-y2 = 0
-ball = {'x': 12, 'y': 7, 'xv': 0, 'yv': 0}
+p1= {'y': 6, 'score': 0}
+p2= {'y': 6, 'score': 0}
+ball = {'x': 12, 'y': 7, 'xv': 1, 'yv': 0}
+
+brettHøyde = 15
+brettBredde = 25
 
 tid = time.time()
 startTid = tid
-while time.time() < startTid + 60:
-    if time.time() > tid + 0.1: # kjør hvert tiendedels sekund
-
+while time.time() < startTid + 60: # lengden på spillet
+    if time.time() > tid + 0.15: # kjør hvert n'te sekund
+        
+        tid += 0.15
         os.system('cls')
-        tid += 0.1 
         # refresh skjermen
         
+
         rader = []
-        for i in range(15):
-            rad = ['O ']*25
+        for i in range(brettHøyde):
+            rad = ['O ']*brettBredde
             rader.append(rad)
         # nullstill alle rader
 
         
         if keyboard.is_pressed('w'):
-            y1 -= 1
+            p1['y'] -= 1
         elif keyboard.is_pressed('s'):
-            y1 += 1
+            p1['y'] += 1
 
         if keyboard.is_pressed('Up'):
-            y2 -= 1
+            p2['y'] -= 1
         elif keyboard.is_pressed('Down'):
-            y2 += 1
-        # bevegelse/key lytter
+            p2['y'] += 1
+        # key lytter
 
 
+        if ball['x'] == 1 :
+
+            if ball['y'] == p1['y'] : 
+                ball['xv'] = -ball['xv'] # snu
+                ball['yv'] -= 1 # gå opp
+
+            elif ball['y'] == p1['y']+1 :
+                ball['xv'] = -ball['xv'] # snu
+                
+            elif ball['y'] == p1['y']+2 : 
+                ball['xv'] = -ball['xv'] # snu
+                ball['yv'] += 1 # gå ned
+        # sprett i rackert 1
+
+
+        if ball['x'] == brettBredde-2 :
+
+            if ball['y'] == p2['y'] : 
+                ball['xv'] = -ball['xv'] # snu
+                ball['yv'] -= 1 # gå opp
+
+            elif ball['y'] == p2['y']+1 :
+                ball['xv'] = -ball['xv'] # snu
+
+            elif ball['y'] == p2['y']+2 : 
+                ball['xv'] = -ball['xv'] # snu
+                ball['yv'] += 1 # gå ned
+        # sprett i rackert 2
+
+
+        if ball['y'] <= 0 :
+            ball['y'] = 0
+            ball['yv'] = -ball['yv'] 
+        elif ball['y'] >= brettHøyde-1 :
+            ball['y'] = brettHøyde-1
+            ball['yv'] = -ball['yv']
+        # sprett i tak/gulv
+
+
+        if ball['x'] <= 0 :
+            p2['score'] += 1
+        elif ball['x'] >= brettBredde-1 :
+            p1['score'] += 1
+        # hvis ballen er utenfor
+
+
+        if p1['y'] >= brettHøyde-1 :
+            p1['y'] >= brettHøyde-1
+        elif p1['y'] <= 0:
+            p1['y'] = 0
+        if p2['y'] >= brettHøyde-1 :
+            p2['y'] >= brettHøyde-1
+        elif p2['y'] <= 0:
+            p2['y'] = 0
+        # hold rackertene på banen
+    
+        ball['x'] += ball['xv']
+        ball['y'] += ball['yv']
         tegn(ball['x'], ball['y'], 'r')
 
-        tegn(1, y1, 'b')
-        tegn(1, y1+1, 'b')
-        tegn(1, y1+2, 'b')
+        tegn(1, p1['y'], 'b')
+        tegn(1, p1['y']+1, 'b')
+        tegn(1, p1['y']+2, 'b')
+        #rackert 1
 
-        tegn(-2, y2, 'l')
-        tegn(-2, y2+1, 'l')
-        tegn(-2, y2+2, 'l')
+        tegn(brettBredde-2, p2['y'], 'l')
+        tegn(brettBredde-2, p2['y']+1, 'l')
+        tegn(brettBredde-2, p2['y']+2, 'l')
+        #rackert 2
 
+
+        print(design.WARNING + str(round(tid-startTid)) + '   ' + str(p1['score']) + ' - ' + str(p2['score']) + design.END)
 
         for rad in rader:
             pikselString = ''
@@ -76,7 +142,7 @@ while time.time() < startTid + 60:
                 pikselString += piksel #lager en string av raden
             print(pikselString) # skriver ut stringen
             
-print(design.FAIL + 'G A M E  O V E R' + design.END)
+print(design.FAIL + 'T I M E   I S   U P !  -  G A M E   O V E R' + design.END)
 
 
             
