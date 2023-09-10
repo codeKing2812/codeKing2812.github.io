@@ -104,17 +104,25 @@ while time.time() < startTid + 60: # lengden på spillet
 
         if ball['x'] <= 0 :
             p2['score'] += 1
+            ball['x'] = 12
+            ball['y'] = 7
+            ball['yv'] = 0
+            ball['xv'] = 1
         elif ball['x'] >= brettBredde-1 :
             p1['score'] += 1
+            ball['x'] = 12
+            ball['y'] = 7
+            ball['yv'] = 0
+            ball['xv'] = -1
         # hvis ballen er utenfor
 
 
         if p1['y'] >= brettHøyde-1 :
-            p1['y'] >= brettHøyde-1
+            p1['y'] = brettHøyde-1
         elif p1['y'] <= 0:
             p1['y'] = 0
         if p2['y'] >= brettHøyde-1 :
-            p2['y'] >= brettHøyde-1
+            p2['y'] = brettHøyde-1
         elif p2['y'] <= 0:
             p2['y'] = 0
         # hold rackertene på banen
