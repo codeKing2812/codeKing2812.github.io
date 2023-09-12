@@ -3,15 +3,35 @@ import time
 import keyboard
 
 class design:
-    HEADER = '\033[95m'
+    HEADER = '\033[95m' # lilla
     BLUE = '\033[94m'
     CYAN = '\033[96m'
     GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    END = '\033[0m'
+    WARNING = '\033[93m' # gul
+    FAIL = '\033[91m' # rød
+
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
+
+os.system('cls')
+
+print(design.BOLD + 'Welcome to the classic arcade game PONG!' + design.END)
+print('Player 1 uses W  S and Player 2 uses arrow up or arrow down')
+print('The player with the most points in 90 seconds win')
+print('Press C for classic graphics or M for modern graphics')
+print('Then press enter to start the game!')
+
+grafikk = input()
+
+if grafikk == 'c' :
+    grafikk = 'O '
+elif grafikk == 'm' :
+    grafikk = '██'
+else :
+    print('You have to write c or m!')
+
 
 
 
@@ -23,8 +43,7 @@ def tegn(x, y, farge):
     elif farge == 'b':
         rader[y][x] =  (design.CYAN)
         
-    rader[y][x] += ('O ' + design.END)
-
+    rader[y][x] += (grafikk + design.END)
 
 
 p1= {'y': 6, 'score': 0}
@@ -34,9 +53,14 @@ ball = {'x': 12, 'y': 7, 'xv': 1, 'yv': 0}
 brettHøyde = 15
 brettBredde = 25
 
+spillLengde = 90
+
 tid = time.time()
 startTid = tid
-while time.time() < startTid + 60: # lengden på spillet
+
+# # # # # # # # # # GAMELOOP # # # # # # # # # 
+
+while time.time() < startTid + spillLengde: # lengden på spillet
     if time.time() > tid + 0.15: # kjør hvert n'te sekund
         
         tid += 0.15
@@ -46,7 +70,7 @@ while time.time() < startTid + 60: # lengden på spillet
 
         rader = []
         for i in range(brettHøyde):
-            rad = ['O ']*brettBredde
+            rad = [grafikk]*brettBredde
             rader.append(rad)
         # nullstill alle rader
 
@@ -117,18 +141,18 @@ while time.time() < startTid + 60: # lengden på spillet
         # hvis ballen er utenfor
 
 
-        if p1['y'] >= brettHøyde-1 :
-            p1['y'] = brettHøyde-1
+        if p1['y']+2 >= brettHøyde :
+            p1['y'] = brettHøyde-3
         elif p1['y'] <= 0:
             p1['y'] = 0
-        if p2['y'] >= brettHøyde-1 :
-            p2['y'] = brettHøyde-1
+        if p2['y']+2 >= brettHøyde :
+            p2['y'] = brettHøyde-3
         elif p2['y'] <= 0:
             p2['y'] = 0
         # hold rackertene på banen
     
         ball['x'] += ball['xv']
-        ball['y'] += ball['yv']
+        ball['y'] += ball['yv'] 
         tegn(ball['x'], ball['y'], 'r')
 
         tegn(1, p1['y'], 'b')
@@ -142,7 +166,7 @@ while time.time() < startTid + 60: # lengden på spillet
         #rackert 2
 
 
-        print(design.WARNING + str(round(tid-startTid)) + '   ' + str(p1['score']) + ' - ' + str(p2['score']) + design.END)
+        print(design.WARNING + str(spillLengde-(round(tid-startTid))) + '   ' + str(p1['score']) + ' - ' + str(p2['score']) + design.END)
 
         for rad in rader:
             pikselString = ''
@@ -152,5 +176,7 @@ while time.time() < startTid + 60: # lengden på spillet
             
 print(design.FAIL + 'T I M E   I S   U P !  -  G A M E   O V E R' + design.END)
 
-
-            
+if p2['score'] < p1['score'] :
+    print(design.GREEN + 'CYAN WINS!' + design.END)
+else :
+    print(design.GREEN + 'PURPLE WINS!' + design.END)
