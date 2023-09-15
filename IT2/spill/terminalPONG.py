@@ -58,7 +58,7 @@ spillLengde = 90
 tid = time.time()
 startTid = tid
 
-# # # # # # # # # # GAMELOOP # # # # # # # # # 
+# # # # # # # # # # GAMELOOP # # # # # # # # # #
 
 while time.time() < startTid + spillLengde: # lengden på spillet
     if time.time() > tid + 0.15: # kjør hvert n'te sekund
