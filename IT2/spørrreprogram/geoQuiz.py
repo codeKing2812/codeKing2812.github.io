@@ -25,7 +25,7 @@ def spørsmål(kategori, underkat=0):
     land = random.choice(landListe)
     fasit = ''
 
-    svar = input(f'Hva er {kategori} i {land["name"]}?')
+    svar = input(f'What is {kategori} in {land["name"]}?')
 
     if str(type(land[kategori])).find('dict') == -1:
         #hvis kategorien ikke er et dictionary
@@ -37,9 +37,9 @@ def spørsmål(kategori, underkat=0):
      
 
     if svar.casefold() == fasit.casefold() :
-        print('Hurra! Det er rett!')
+        print('Hurray! Correct!')
     else:
-        print(f'Du suger. Det er selvfølgelig {fasit}')
+        print(f'You suck. The answer is{fasit}')
 
 spørsmål("capitalCity")
 
