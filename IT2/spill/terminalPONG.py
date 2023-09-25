@@ -91,14 +91,14 @@ while time.time() < startTid + spillLengde: # lengden på spillet
 
             if ball['y'] == p1['y'] : 
                 ball['xv'] = -ball['xv'] # snu
-                ball['yv'] -= 1 # gå opp
+                ball['yv'] = -1 # gå opp
 
             elif ball['y'] == p1['y']+1 :
                 ball['xv'] = -ball['xv'] # snu
                 
             elif ball['y'] == p1['y']+2 : 
                 ball['xv'] = -ball['xv'] # snu
-                ball['yv'] += 1 # gå ned
+                ball['yv'] = 1 # gå ned
         # sprett i rackert 1
 
 
@@ -106,14 +106,14 @@ while time.time() < startTid + spillLengde: # lengden på spillet
 
             if ball['y'] == p2['y'] : 
                 ball['xv'] = -ball['xv'] # snu
-                ball['yv'] -= 1 # gå opp
+                ball['yv'] = -1 # gå opp
 
             elif ball['y'] == p2['y']+1 :
                 ball['xv'] = -ball['xv'] # snu
 
             elif ball['y'] == p2['y']+2 : 
                 ball['xv'] = -ball['xv'] # snu
-                ball['yv'] += 1 # gå ned
+                ball['yv'] = 1 # gå ned
         # sprett i rackert 2
 
 
