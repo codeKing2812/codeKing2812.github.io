@@ -1,6 +1,6 @@
 from ytmusicapi import YTMusic
 from tkinter import *
-from tkinter import ttk, simpledialog
+from tkinter import ttk
 
 
 api = YTMusic()

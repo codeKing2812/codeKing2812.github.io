@@ -53,12 +53,16 @@ ball = {'x': 12, 'y': 7, 'xv': 1, 'yv': 0}
 brettHøyde = 15
 brettBredde = 25
 
+
+
+
+
+# # # # # # # # # # GAMELOOP # # # # # # # # # #
+
 spillLengde = 90
 
 tid = time.time()
 startTid = tid
-
-# # # # # # # # # # GAMELOOP # # # # # # # # # #
 
 while time.time() < startTid + spillLengde: # lengden på spillet
     if time.time() > tid + 0.15: # kjør hvert n'te sekund
