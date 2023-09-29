@@ -4,9 +4,9 @@ import keyboard
 
 class design:
     HEADER = '\033[95m' # lilla
-    BLUE = '\033[94m'
-    CYAN = '\033[96m'
-    GREEN = '\033[92m'
+    BLUE = '\033[94m' # blå
+    CYAN = '\033[96m' # turkis
+    GREEN = '\033[92m' # grønn
     WARNING = '\033[93m' # gul
     FAIL = '\033[91m' # rød
 
@@ -25,9 +25,9 @@ print('Then press enter to start the game!')
 
 grafikk = input()
 
-if grafikk == 'c' :
+if grafikk.lower() == 'c' :
     grafikk = 'O '
-elif grafikk == 'm' :
+elif grafikk.lower() == 'm' :
     grafikk = '██'
 else :
     print('You have to write c or m!')
@@ -46,8 +46,8 @@ def tegn(x, y, farge):
     rader[y][x] += (grafikk + design.END)
 
 
-p1= {'y': 6, 'score': 0}
-p2= {'y': 6, 'score': 0}
+p1= {'y': 6, 'yv': 0, 'score': 0}
+p2= {'y': 6, 'yv': 0, 'score': 0}
 ball = {'x': 12, 'y': 7, 'xv': 1, 'yv': 0}
 
 brettHøyde = 15
@@ -55,19 +55,39 @@ brettBredde = 25
 
 
 
-
-
 # # # # # # # # # # GAMELOOP # # # # # # # # # #
 
 spillLengde = 90
+framerate = 0.15
+tid = startTid = time.time()
 
-tid = time.time()
-startTid = tid
+while time.time() < startTid + spillLengde: # gjennom hele spillet
 
-while time.time() < startTid + spillLengde: # lengden på spillet
-    if time.time() > tid + 0.15: # kjør hvert n'te sekund
+    if keyboard.is_pressed('s'):
+        if p1['yv'] < 1 :
+            p1['yv'] += 1
+    elif keyboard.is_pressed('w'):
+        if p1['yv'] > -1 :
+            p1['yv'] -= 1
+
+    if keyboard.is_pressed('Down'):
+        if p2['yv'] < 1 :
+            p2['yv'] += 1
+    elif keyboard.is_pressed('Up'):
+        if p2['yv'] > -1 :
+            p2['yv'] -= 1
+    # key lytter
+
+
+    if time.time() > tid: 
+        tid += framerate # kjør frame hvert n'te sekund
+
+        if tid - startTid > spillLengde - 30:
+            framerate = 0.10 # gå fortere 
+        elif tid - startTid > spillLengde - 15:
+            framerate = 0.8 # enda fortere
+
         
-        tid += 0.15
         os.system('cls')
         # refresh skjermen
         
@@ -78,17 +98,13 @@ while time.time() < startTid + spillLengde: # lengden på spillet
             rader.append(rad)
         # nullstill alle rader
 
-        
-        if keyboard.is_pressed('w'):
-            p1['y'] -= 1
-        elif keyboard.is_pressed('s'):
-            p1['y'] += 1
 
-        if keyboard.is_pressed('Up'):
-            p2['y'] -= 1
-        elif keyboard.is_pressed('Down'):
-            p2['y'] += 1
-        # key lytter
+        
+        p1['y'] += p1['yv'] 
+        p1['yv'] = 0
+        p2['y'] += p2['yv'] 
+        p2['yv'] = 0
+        # flytt rackerter
 
 
         if ball['x'] == 1 :
@@ -182,7 +198,7 @@ while time.time() < startTid + spillLengde: # lengden på spillet
                 pikselString += piksel #lager en string av raden
             print(pikselString) # skriver ut stringen
             
-print(design.FAIL + 'T I M E   I S   U P !  -  G A M E   O V E R' + design.END)
+print(design.FAIL + 'T I M E   I S   U P   -   G A M E   O V E R' + design.END)
 
 if p2['score'] < p1['score'] :
     print(design.GREEN + 'CYAN WINS!' + design.END)
