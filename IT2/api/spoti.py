@@ -18,39 +18,34 @@ for item in results['items']:
     # print(låt['name'])
 
 
-
-
 from tkinter import *
 from tkinter import ttk
 
-
-def visWidget(widget):
-    widget.place()
-
-def skjulWidget(widget):
-    widget.place_forget()
-
-
 app = Tk()
-app.geometry("500x500")
+app.geometry("500x600")
+main = ttk.Frame(app)
+main.place(rely=0, relwidth=1)
 #lager rammen for programmet
 
 scroll = ttk.Scrollbar(app)
-scroll.place(relx=1)
+scroll.place(relx=1, anchor='ne', relheight=1)
 
-ttk.Label(app, text='Dine siste likte låter er:').place(rely=0, relx=0.5)
+
+ttk.Label(main, text='Dine siste likte låter er:').pack(pady=5)
 
 
 def infoKnapp(låt):
-    i1 = ttk.Label(app, text='album: ' + låt['album']['name'])
-    i2 = ttk.Label(app, text='artist: ' + låt['artists'][0]['name'])
-    skjulWidget(i1)
-    skjulWidget(i2)
-    
-    ttk.Button(app, text=låt['name'], command= lambda: [visWidget(i1), visWidget(i2)]).place(rely=0.2, relx=0.5)
-                   
-    ttk.Button(app, text='lukk', command= lambda: [skjulWidget(i1), skjulWidget(i2)]).place(rely=0.3, relx=0.5)
+    sangBoks = ttk.Frame(main).pack()
+    i1 = ttk.Label(sangBoks, text='album: ' + låt['album']['name'])
+    i2 = ttk.Label(sangBoks, text='artist: ' + låt['artists'][0]['name'])
+    lukk = ttk.Button(sangBoks, text='lukk', command= lambda: [i1.forget(), i2.forget(), lukk.forget()])
 
+    # skjulWidget(i1)
+    # skjulWidget(i2)
+    # skjulWidget(lukk)
+    
+    ttk.Button(sangBoks, text=låt['name'], command= lambda: [i1.pack(), i2.pack(), lukk.pack()]).pack()
+                   
 for låt in likteLåter:
     infoKnapp(låt)
 
@@ -58,10 +53,10 @@ for låt in likteLåter:
 # ttk.Entry(program,  textvariable = in_tekst)
 
 
-# info1 = ttk.Label(app, text='album: ' + likteLåter[0]['album']['name'])
-# info2 = ttk.Label(app, text='artist: ' + likteLåter[0]['artists'][0]['name'])
+# info1 = ttk.Label(main, text='album: ' + likteLåter[0]['album']['name'])
+# info2 = ttk.Label(main, text='artist: ' + likteLåter[0]['artists'][0]['name'])
 
 
-ttk.Button(app, text='Lukk program', command=app.destroy).place(rely=1, relx=0.5)
+ttk.Button(main, text='Lukk program', command=app.destroy).pack()
 
 app.mainloop()
