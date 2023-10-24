@@ -1,0 +1,5 @@
+https://www.w3schools.com/python/python_datetime.asp
+
+https://www.w3schools.com/python/python_try_except.asp
+
+https://www.geeksforgeeks.org/division-operators-in-python/
