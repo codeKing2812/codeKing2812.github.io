@@ -1,5 +1,7 @@
 from tkinter import *
-from math import *
+from math import sqrt
+import random 
+import time
 import keyboard
 
 
@@ -16,14 +18,29 @@ class Boks:
         self.y = y
         self.masse = masse
         self.state = state
+        self.respawn = True
 
     @property
     def bredde(self):
         return (sqrt(self.masse))/2
 
-    def hentForm(self):
+    def tegn(self):
         self.id = c.create_rectangle(self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde, fill=self.farge, state=self.state)
     
+    def oppdaterState(self, state):
+        print(state)
+        self.state = state
+        c.itemconfigure(self.id, state=state)
+
+    def slett(self):
+        self.oppdaterState(HIDDEN)
+
+        if self.respawn:
+            global frameNr
+            startFrame = frameNr
+            if frameNr > startFrame + random.randint(60, 300):
+                self.oppdaterState(NORMAL)
+
     def er_over(self, annen):
         avstandX = abs(self.x - annen.x)
         avstandY = abs(self.y - annen.y)
@@ -33,12 +50,8 @@ class Boks:
         if avstandX < totalBredde and avstandY < totalBredde:
             return True
 
-        # if self.x + 10 > annen.x and self.x < annen.x + 10 and self.y + 10 > annen.y and self.y < annen.y + 10:
-        #     return True
         
-    def slett(self):
-        self.state = DISABLED
-        c.delete(self.id)
+        
         
         
 
@@ -49,7 +62,9 @@ class Spiller(Boks):
         self.xv = xv
         self.yv = yv
 
-        self.hentForm()
+        self.respawn = False
+
+        self.tegn()
 
 
     def flytt(self):
@@ -76,14 +91,14 @@ class Bot(Spiller):
 
     def jakt(self, annen):
         if self.x < annen.x:
-            self.xv = 0.05
+            self.xv = 0.15
         else :
-            self.xv = -0.05
+            self.xv = -0.15
             
         if self.y < annen.y:
-            self.yv = 0.05
+            self.yv = 0.15
         else :
-            self.yv = -0.05
+            self.yv = -0.15
 
 
 bot1 = Bot('red', 60, 100, 450)
@@ -95,7 +110,7 @@ botListe = [bot1, bot2, bot3, bot4]
 
 blå = Spiller('blue', 50, 200, 400)
 
-spillerListe = [blå,] + botListe
+spillerListe = [blå] + botListe
 
 print(spillerListe)
 
@@ -105,11 +120,13 @@ for y in range(5):
     for x in range(5):
         mat = Boks('green', 100*x+50, 100*y+50, 20)
         matListe.append(mat)
-        mat.hentForm()
+        mat.tegn()
 
 
 
-while True: # gameloop
+frameNr = 0
+def gameloop() :
+    global frameNr
 
     for spiller in spillerListe:
         for mat in matListe:
@@ -130,18 +147,18 @@ while True: # gameloop
 
 
     if keyboard.is_pressed('Right'):
-        blå.xv = 0.1
+        blå.xv = 0.2
         blå.flytt()
     elif keyboard.is_pressed('Left'):
-        blå.xv = -0.1
+        blå.xv = -0.2
         blå.flytt()
     else: blå.xv = 0
 
     if keyboard.is_pressed('Down'):
-        blå.yv = 0.1
+        blå.yv = 0.2
         blå.flytt()
     elif keyboard.is_pressed('Up'):
-        blå.yv = -0.1
+        blå.yv = -0.2
         blå.flytt()
     else: blå.yv = 0
 
@@ -150,3 +167,18 @@ while True: # gameloop
     app.update_idletasks()
     app.update()
 
+    frameNr+=1
+
+
+
+spillLengde = 20
+framerate = 1/60
+tid = startTid = time.time()
+
+while tid < startTid + spillLengde: # til tiden er ute
+    if time.time() > tid: # kjør frame
+        gameloop()
+        tid += framerate 
+         
+
+print('fps:', frameNr/spillLengde)
