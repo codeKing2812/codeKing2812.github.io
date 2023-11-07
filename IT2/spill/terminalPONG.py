@@ -61,7 +61,7 @@ spillLengde = 90
 framerate = 0.15
 tid = startTid = time.time()
 
-while time.time() < startTid + spillLengde: # gjennom hele spillet
+while tid < startTid + spillLengde: # gjennom hele spillet
 
     if keyboard.is_pressed('s'):
         if p1['yv'] < 1 :
