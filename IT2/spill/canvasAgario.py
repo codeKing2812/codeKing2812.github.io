@@ -18,28 +18,36 @@ class Boks:
         self.y = y
         self.masse = masse
         self.state = state
-        self.respawn = True
+        self.respawn = 'på'
+        self.startFrame = 0
 
     @property
     def bredde(self):
         return (sqrt(self.masse))/2
-
+    
     def tegn(self):
         self.id = c.create_rectangle(self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde, fill=self.farge, state=self.state)
     
-    def oppdaterState(self, state):
+    def endreState(self, state):
         print(state)
         self.state = state
         c.itemconfigure(self.id, state=state)
 
-    def slett(self):
-        self.oppdaterState(HIDDEN)
-
-        if self.respawn:
+    def oppdater(self):
+        if self.respawn == 'aktiv':
             global frameNr
-            startFrame = frameNr
-            if frameNr > startFrame + random.randint(60, 300):
-                self.oppdaterState(NORMAL)
+            if frameNr > self.startFrame + random.randint(360, 1080):
+                self.endreState(NORMAL)
+                self.respawn = 'på'
+    
+    def slett(self):
+        self.endreState(HIDDEN)
+
+        if self.respawn == 'på':
+            global frameNr
+            self.startFrame = frameNr
+            self.respawn = 'aktiv'
+
 
     def er_over(self, annen):
         avstandX = abs(self.x - annen.x)
@@ -50,10 +58,7 @@ class Boks:
         if avstandX < totalBredde and avstandY < totalBredde:
             return True
 
-        
-        
-        
-        
+
 
 
 class Spiller(Boks):
@@ -62,10 +67,17 @@ class Spiller(Boks):
         self.xv = xv
         self.yv = yv
 
-        self.respawn = False
+        self.respawn = 'av'
 
         self.tegn()
 
+    def oppdater(self):
+        self.flytt()
+
+        if self.respawn == 'aktiv':
+            global frameNr
+            if frameNr > self.startFrame + random.randint(60, 300):
+                self.endreState(NORMAL)
 
     def flytt(self):
 
@@ -142,8 +154,12 @@ def gameloop() :
         
     for bot in botListe:
         bot.jakt(blå)
-        bot.flytt()
-    
+        bot.oppdater()
+
+    for mat in matListe:
+        mat.oppdater()
+
+    blå.oppdater()
 
 
     if keyboard.is_pressed('Right'):
@@ -171,7 +187,7 @@ def gameloop() :
 
 
 
-spillLengde = 20
+spillLengde = 30
 framerate = 1/60
 tid = startTid = time.time()
 
