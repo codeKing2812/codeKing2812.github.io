@@ -5,6 +5,8 @@ import time
 import keyboard
 
 
+# NIO: k3mscqfx
+
 app = Tk()
 app.geometry("500x500")
 c = Canvas(app, width=500, height=500, background='beige')
@@ -29,7 +31,7 @@ class Boks:
         self.id = c.create_rectangle(self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde, fill=self.farge, state=self.state)
     
     def endreState(self, state):
-        print(state)
+        # print(state)
         self.state = state
         c.itemconfigure(self.id, state=state)
 
@@ -49,15 +51,25 @@ class Boks:
             self.respawn = 'aktiv'
 
 
-    def er_over(self, annen):
-        avstandX = abs(self.x - annen.x)
-        avstandY = abs(self.y - annen.y)
+    def avstand(self, annen):
+        if annen == self:
+            return 1000000
+
+        xAvstand = abs(self.x - annen.x)
+        yAvstand = abs(self.y - annen.y)
 
         totalBredde = self.bredde + annen.bredde
-        
-        if avstandX < totalBredde and avstandY < totalBredde:
-            return True
 
+        xAvstand -= totalBredde
+        yAvstand -= totalBredde
+
+        if xAvstand < 0:
+            xAvstand = 0
+        
+        if yAvstand < 0:
+            yAvstand = 0
+
+        return xAvstand+yAvstand
 
 
 
@@ -76,7 +88,7 @@ class Spiller(Boks):
 
         if self.respawn == 'aktiv':
             global frameNr
-            if frameNr > self.startFrame + random.randint(60, 300):
+            if frameNr > self.startFrame + random.randint(60, 600):
                 self.endreState(NORMAL)
 
     def flytt(self):
@@ -85,13 +97,9 @@ class Spiller(Boks):
         self.y = self.y + self.yv
         
         c.coords(self.id, self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde)
-
-
-    def tp(self, x, y):
-        c.coords(self.id, x, y, self.x+self.bredde, self.y+self.bredde)
     
     def spis(self, annen):
-        if annen.state == self.state == NORMAL and self.masse > annen.masse*1.05:
+        if annen.state == self.state == NORMAL and self.masse > annen.masse:
             self.masse += annen.masse
             annen.slett()
 
@@ -101,16 +109,32 @@ class Bot(Spiller):
     def __init__(self, farge, x, y, masse, xv=0, yv=0):
         super().__init__(farge, x, y, masse, xv, yv)
 
-    def jakt(self, annen):
-        if self.x < annen.x:
+    def jakt(self, alleMål, hovedMål):
+        minsteAvstand = 100000
+
+        for annen in hovedMål: # finn den nærmeste av hovedmålene
+            avstand = self.avstand(annen)
+            if avstand < minsteAvstand and annen.state == NORMAL:
+                minsteAvstand = avstand
+                mål = annen 
+
+        if annen.masse > self.masse : # hvis den ikke er spiselig
+            for annen in alleMål: #finn det nærmeste som er spiselig 
+                avstand = self.avstand(annen)
+                if avstand < minsteAvstand and annen.masse < self.masse and annen.state == NORMAL:
+                    minsteAvstand = avstand
+                    mål = annen
+
+        if self.x < mål.x:
             self.xv = 0.15
         else :
             self.xv = -0.15
             
-        if self.y < annen.y:
+        if self.y < mål.y:
             self.yv = 0.15
         else :
             self.yv = -0.15
+
 
 
 bot1 = Bot('red', 60, 100, 450)
@@ -124,8 +148,6 @@ blå = Spiller('blue', 50, 200, 400)
 
 spillerListe = [blå] + botListe
 
-print(spillerListe)
-
 
 matListe = []
 for y in range(5):
@@ -134,7 +156,7 @@ for y in range(5):
         matListe.append(mat)
         mat.tegn()
 
-
+alleBokser = spillerListe + matListe
 
 frameNr = 0
 def gameloop() :
@@ -142,24 +164,21 @@ def gameloop() :
 
     for spiller in spillerListe:
         for mat in matListe:
-            if spiller.er_over(mat):
+            if spiller.avstand(mat) == 0:
                 spiller.spis(mat)
         
         for bot in botListe:
-            if spiller.er_over(bot):
+            if spiller.avstand(bot) == 0:
                 spiller.spis(bot)
                 bot.spis(spiller)
 
 
         
     for bot in botListe:
-        bot.jakt(blå)
-        bot.oppdater()
+        bot.jakt(alleBokser, spillerListe)
 
-    for mat in matListe:
-        mat.oppdater()
-
-    blå.oppdater()
+    for boks in alleBokser:
+        boks.oppdater()
 
 
     if keyboard.is_pressed('Right'):
@@ -187,7 +206,7 @@ def gameloop() :
 
 
 
-spillLengde = 30
+spillLengde = 45
 framerate = 1/60
 tid = startTid = time.time()
 
