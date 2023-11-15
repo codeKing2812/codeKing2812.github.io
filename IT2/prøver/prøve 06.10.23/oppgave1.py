@@ -1,6 +1,16 @@
 # oppgave A
+høyde = 0
+def hentHøyde():
+    global høyde
+    høyde = input('høyde:')
+    try:
+        int(høyde)
+    except ValueError:
+        print('error')
+        hentHøyde()
+hentHøyde()
 
-høyde = int(input('høyde:'))
+
 bredde = int(input('bredde:'))
 
 def bildeFormat(høyde, bredde) :

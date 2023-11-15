@@ -21,7 +21,7 @@ varedata = [
         'grafikkort':' Adreno 660',
         'batterikapasitet':' 4500 mAh',
         'vekt':' 200 g'},
-    'Farger': ['svart', 'hvit', 'grønn']}
+    'Farger': ['svart', 'hvit']}
     ]
 
 
@@ -52,10 +52,10 @@ def skrivInfo(ordbok):
 # for ordbok in varedata:
 #     skrivInfo(ordbok)
 
-def finnVare(vareID):
+def finnVare(fargeInn):
     for ordbok in varedata:
-        if ordbok['Vare-ID'] == vareID :
-            skrivInfo(ordbok)
+        for farge in ordbok['Farger']:
+            if farge == fargeInn :
+                skrivInfo(ordbok)
 
-finnVare('Asus Zenbook GH215')
-
+finnVare('blå')
