@@ -1,8 +1,14 @@
 from tkinter import *
 from math import sqrt
+from PIL import ImageTk,Image 
 import random 
 import time
 import keyboard
+import os
+
+
+def absRef(relRef): # funksjon for å finne absolutt referanse til en fil
+    return os.path.join(os.path.dirname(__file__), relRef)
 
 
 # NIO: k3mscqfx 
@@ -14,14 +20,17 @@ c.pack()
 
 
 class Boks:
-    def __init__(self, farge, x, y, masse, state=NORMAL, respawn='på'):
+    def __init__(self, farge, x, y, masse, state=NORMAL, respawn='på', bilde=None):
         self.farge = farge
         self.x = x
         self.y = y
         self.masse = masse
         self.state = state
         self.respawn = respawn
+        self.bilde = bilde
         self.startFrame = 0
+
+        self.tegn()
 
 
     @property
@@ -30,7 +39,10 @@ class Boks:
     
 
     def tegn(self):
-        self.id = c.create_rectangle(self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde, fill=self.farge, state=self.state)
+        if self.bilde:
+            self.id = c.create_image(self.x, self.y, image=self.bilde, state=self.state)
+        else: 
+            self.id = c.create_rectangle(self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde, fill=self.farge, state=self.state)
     
 
     def endreState(self, state):
@@ -78,12 +90,10 @@ class Boks:
 
 
 class Spiller(Boks):
-    def __init__(self, farge, x, y, masse, xv=0, yv=0, respawn='av'): 
-        super().__init__(farge, x, y, masse, respawn=respawn)
+    def __init__(self, farge, x, y, masse, xv=0, yv=0, respawn='av', bilde=None): 
+        super().__init__(farge, x, y, masse, respawn=respawn, bilde=bilde)
         self.xv = xv
         self.yv = yv
-
-        self.tegn()
 
 
     def oppdater(self):
@@ -123,8 +133,8 @@ class Spiller(Boks):
 
 
 class Bot(Spiller):
-    def __init__(self, farge, x, y, masse, xv=0, yv=0, respawn='av'):
-        super().__init__(farge, x, y, masse, xv, yv, respawn)
+    def __init__(self, farge, x, y, masse, xv=0, yv=0, respawn='av', bilde=None):
+        super().__init__(farge, x, y, masse, xv, yv, respawn, bilde=bilde)
 
 
     def jakt(self, alleMål, hovedMål):
@@ -172,12 +182,30 @@ for y in range(5):
     for x in range(5):
         mat = Boks('green', 100*x+50, 100*y+50, 20)
         matListe.append(mat)
-        mat.tegn()
 
 alleBokser = spillerListe + matListe
 
 
-def gameloop() :
+
+gameOverBokstaver = []
+gameOverSheet = Image.open(absRef('game_over.png'))
+y = 0
+while y + 320 <= gameOverSheet.height:
+    bokstavBilde = ImageTk.PhotoImage(gameOverSheet.crop([0,y,320,y+320]))
+    bokstavBoks = Boks(None, 200, 200, 1000, state=HIDDEN, respawn='av', bilde=bokstavBilde)
+    gameOverBokstaver.append(bokstavBoks)
+    y += 320
+
+
+
+def gameOver():
+    gameOverBokstaver[5].endreState(NORMAL)
+
+
+
+
+
+def gameloop():
     global frameNr
 
     for spiller in spillerListe:
@@ -191,13 +219,11 @@ def gameloop() :
                 bot.spis(spiller)
 
 
-        
     for bot in botListe:
         bot.jakt(alleBokser, spillerListe)
-
+        
     for boks in alleBokser:
         boks.oppdater()
-
 
 
     if keyboard.is_pressed('Right'):
@@ -212,11 +238,16 @@ def gameloop() :
         blå.yv = -0.5
     else: blå.yv = 0
 
+
+    if blå.state != NORMAL:
+        gameOver()
+
+
     frameNr+=1
 
 
 frameNr = 0
-spillLengde = 30
+spillLengde = 90
 framerate = 1/60
 tid = startTid = time.time()
 
@@ -227,6 +258,8 @@ while tid < startTid + spillLengde: # til tiden er ute
 
         app.update_idletasks()
         app.update()
+
+gameOver()
          
 
 print('fps:', frameNr/spillLengde)
