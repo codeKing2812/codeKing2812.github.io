@@ -6,17 +6,23 @@ import time
 import keyboard
 import os
 
-
-def absRef(relRef): # funksjon for å finne absolutt referanse til en fil
-    return os.path.join(os.path.dirname(__file__), relRef)
-
-
 # NIO: k3mscqfx 
+
+
+#
+########################################################## TKINTER SETUP ############################################################################
+#
+
 
 app = Tk()
 app.geometry("500x500")
 c = Canvas(app, width=500, height=500, background='beige')
 c.pack()
+
+
+#
+########################################################## DEFINERING AV KLASSER ############################################################################
+#
 
 
 class Boks:
@@ -164,6 +170,20 @@ class Bot(Spiller):
         else :
             self.yv = -0.3
 
+#
+########################################################## DEFINERING AV FUNKSJONER ############################################################################
+
+def absRef(relRef): # funksjon for å finne absolutt referanse til en fil
+    return os.path.join(os.path.dirname(__file__), relRef)
+
+
+def gameOver():
+    gameOverBokstaver[5].endreState(NORMAL)
+
+
+#
+########################################################## OPPRETTING AV OBJEKTER ############################################################################
+#
 
 
 bot1 = Bot('red', random.randint(0, 500), 100, 500)
@@ -198,11 +218,9 @@ while y + 320 <= gameOverSheet.height:
 
 
 
-def gameOver():
-    gameOverBokstaver[5].endreState(NORMAL)
-
-
-
+#
+########################################################## GAMELOOP ############################################################################
+#
 
 
 def gameloop():
