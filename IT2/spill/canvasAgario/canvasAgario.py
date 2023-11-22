@@ -46,6 +46,7 @@ class Boks:
 
     def tegn(self):
         if self.bilde:
+            self.bilde = ImageTk.PhotoImage(self.bilde.resize((round(self.bredde*2), round(self.bredde*2))))
             self.id = c.create_image(self.x, self.y, image=self.bilde, state=self.state)
         else: 
             self.id = c.create_rectangle(self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde, fill=self.farge, state=self.state)
@@ -53,6 +54,7 @@ class Boks:
 
     def endreState(self, state):
         self.state = state
+        print(self.id)
         c.itemconfigure(self.id, state=state)
 
 
@@ -178,7 +180,8 @@ def absRef(relRef): # funksjon for å finne absolutt referanse til en fil
 
 
 def gameOver():
-    gameOverBokstaver[5].endreState(NORMAL)
+    for bokstav in gameOverBokstaver:
+        bokstav.endreState(NORMAL)
 
 
 #
@@ -208,13 +211,12 @@ alleBokser = spillerListe + matListe
 
 
 gameOverBokstaver = []
-gameOverSheet = Image.open(absRef('game_over.png'))
-y = 0
-while y + 320 <= gameOverSheet.height:
-    bokstavBilde = ImageTk.PhotoImage(gameOverSheet.crop([0,y,320,y+320]))
-    bokstavBoks = Boks(None, 200, 200, 1000, state=HIDDEN, respawn='av', bilde=bokstavBilde)
+gameOverSheet = Image.open(absRef('bilder/game_over2.png'))
+for i in range(8):
+    y = i*320
+    bokstavBilde = gameOverSheet.crop([0,y,320,y+320])
+    bokstavBoks = Boks(None, (i+1)*60, 200, 2500, state=HIDDEN, respawn='av', bilde=bokstavBilde)
     gameOverBokstaver.append(bokstavBoks)
-    y += 320
 
 
 
@@ -259,6 +261,7 @@ def gameloop():
 
     if blå.state != NORMAL:
         gameOver()
+    
 
 
     frameNr+=1
