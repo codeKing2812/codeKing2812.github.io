@@ -8,7 +8,7 @@ import os
 
 
 #
-########################################################## TKINTER SETUP ############################################################################
+########################################################## TKINTER SETUP ##################################################################################
 #
 
 
@@ -24,19 +24,26 @@ c.pack()
 
 
 class Boks:
-    def __init__(self, farge, x, y, masse, state=NORMAL, respawn='på', bilde=None, tags=[]):
-        self.farge = farge
+    def __init__(self, x, y, masse, bilde=None, bildeBredde=0, bildeHøyde=0, bildeKolonne=0, bildeRad=0, tags=[], state=NORMAL, respawn='på'):
         self.x = x
         self.y = y
         self.masse = masse
+
+        self.bilde = bilde
+        self.bildeBredde = bildeBredde
+        self.bildeHøyde = bildeHøyde
+        self.bildeKolonne = bildeKolonne
+        self.bildeRad = bildeRad
+        self.bilde = spritesheet(self.bilde, self.bildeBredde, self.bildeHøyde, self.bildeKolonne, self.bildeRad)
+        self.bildeTk = None
+
+        self.tags = tags + ['boks']
         self.state = state
         self.respawn = respawn
-        self.bilde = bilde
-        self.bildeTk = None
-        self.tags = tags + ['boks']
+
         self.startFrame = 0
 
-        self.tegn()
+        self.tegnBilde()
 
 
     @property
@@ -50,18 +57,10 @@ class Boks:
         app.update()
 
 
-    def tegn(self):
-        if self.bilde:
-            self.tegnBilde()
-        else: 
-            c.create_rectangle(self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde, fill=self.farge, state=self.state, tags=tuple(self.tags))
-    
 
     def endreState(self, state):
         self.state = state
-        if self.bilde:
-            self.tegnBilde()
-        else: c.itemconfig(self.tags[0], state=state)
+        self.tegnBilde()
 
 
 
@@ -69,10 +68,10 @@ class Boks:
         if self.respawn == 'aktiv':
             global frameNr
             if frameNr > self.startFrame + randint(600, 1200):
-                if self.tags.index('mat') > 0:
+                if 'mat' in self.tags:
                     self.x = randint(0,500)
                     self.y =  randint(0,500)
-                    c.coords(self.tags[0], self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde)
+                    c.coords(self.tags[0], self.x, self.y)
                 self.endreState(NORMAL)
                 self.respawn = 'på'
     
@@ -110,8 +109,8 @@ class Boks:
 
 
 class Spiller(Boks):
-    def __init__(self, farge, x, y, masse, xv=0, yv=0, respawn='av', bilde=None, tags=[]): 
-        super().__init__(farge, x, y, masse, respawn=respawn, bilde=bilde, tags=tags+['spiller'])
+    def __init__(self, x, y, masse, bilde, bildeBredde, bildeHøyde, bildeKolonne, bildeRad, tags=[], state=NORMAL, respawn='av', xv=0, yv=0):
+        super().__init__(x, y, masse, bilde, bildeBredde=bildeBredde, bildeHøyde=bildeHøyde, bildeKolonne=bildeKolonne, bildeRad=bildeRad, respawn=respawn, state=state, tags=tags+['spiller'])
         self.xv = xv
         self.yv = yv
 
@@ -142,27 +141,22 @@ class Spiller(Boks):
         self.x = self.x + self.xv
         self.y = self.y + self.yv
         
-        if self.bilde:
-            c.coords(self.tags[0], self.x, self.y)
-            self.tegnBilde()
+        c.coords(self.tags[0], self.x, self.y)
+        self.tegnBilde()
 
-        else: 
-            c.coords(self.tags[0], self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde)
-    
 
     def spis(self, annen):
         if annen.state == self.state == NORMAL and self.masse > annen.masse:
             self.masse += annen.masse
             annen.dø()
 
-            if self.bilde:
-                self.tegnBilde()
+            self.tegnBilde()
 
 
 
 class Bot(Spiller):
-    def __init__(self, farge, x, y, masse, xv=0, yv=0, respawn='av', bilde=None, tags=[]):
-        super().__init__(farge, x, y, masse, xv, yv, respawn, bilde=bilde, tags=tags+['bot'])
+    def __init__(self, x, y, masse, bilde, bildeBredde, bildeHøyde, bildeKolonne, bildeRad, tags=[], state=NORMAL, respawn='på', xv=0, yv=0):
+        super().__init__(x, y, masse, bilde, bildeBredde=bildeBredde, bildeHøyde=bildeHøyde, bildeKolonne=bildeKolonne, bildeRad=bildeRad, state=state, respawn=respawn, xv=xv, yv=yv, tags=tags+['bot'])
 
  
     def jakt(self, alleMål, hovedMål):
@@ -205,7 +199,7 @@ def absRef(relRef): # funksjon for å finne absolutt referanse til en fil fra re
 spillSlutt = False
 def gameOver():
     global spillSlutt, alleBokser
-    
+
     if spillSlutt == False:
         for bokstav in gameOverBokstaver:
             bokstav.endreState(NORMAL) 
@@ -213,9 +207,9 @@ def gameOver():
         alleBokser = gameOverBokstaver + spillerListe + matListe
 
 
-def spritesheet(sheetRef, bildeBredde, bildeHøyde, bildeNr, bildeRad):
+def spritesheet(sheetRef, bredde, bildeHøyde, kolonne, rad):
     sheet = Image.open(absRef(sheetRef))
-    bilde = sheet.crop([bildeNr*bildeBredde, bildeRad*bildeHøyde, bildeNr*bildeBredde+bildeBredde, bildeRad*bildeHøyde+bildeHøyde])
+    bilde = sheet.crop([kolonne*bredde, rad*bildeHøyde, kolonne*bredde+bredde, rad*bildeHøyde+bildeHøyde])
     return bilde
 
 
@@ -224,21 +218,21 @@ def spritesheet(sheetRef, bildeBredde, bildeHøyde, bildeNr, bildeRad):
 #
 
 
-bot1 = Bot(None, randint(0, 500), 100, 500, bilde=spritesheet('bilder/spillere2.png', 320, 320, 0, 1), tags=['bot1'])
-bot2 = Bot(None, randint(0, 500), 200, 500, bilde=spritesheet('bilder/spillere2.png', 320, 320, 0, 1), tags=['bot2'])
-bot3 = Bot(None, randint(0, 500), 300, 500, bilde=spritesheet('bilder/spillere2.png', 320, 320, 0, 1), tags=['bot3'])
-bot4 = Bot(None, randint(0, 500), 400, 500, bilde=spritesheet('bilder/spillere2.png', 320, 320, 0, 1), tags=['bot4'])
+bot1 = Bot(randint(0, 500), 100, 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot1'])
+bot2 = Bot(randint(0, 500), 100, 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot2'])
+bot3 = Bot(randint(0, 500), 100, 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot3'])
+bot4 = Bot(randint(0, 500), 100, 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot4'])
 
 botListe = [bot1, bot2, bot3, bot4]
 
-blå = Spiller(None, 250, 250, 500, bilde=spritesheet('bilder/spillere2.png', 320, 320, 0, 0), tags=['blå'])
+blå = Spiller( 250, 250, 500, 'bilder/spillere2.png', 320, 320, 0, 0, tags=['blå'])
 
 spillerListe = [blå] + botListe
 
 matListe = []
 for i in range(25):
     tag = 'mat' + str(i)
-    mat = Boks('green', randint(0, 500), randint(0, 500), 25, tags=[tag, 'mat'])
+    mat = Boks(randint(0, 500),randint(0, 500), 100, 'bilder/mat.png', 320, 320, 0, 0, tags=[tag, 'mat'])
     matListe.append(mat)
 
 alleBokser = spillerListe + matListe 
@@ -247,7 +241,7 @@ alleBokser = spillerListe + matListe
 
 gameOverBokstaver = []
 for i in range(8):
-    bokstavBoks = Boks(None, (i+1)*55, 200, 2500, state=HIDDEN, respawn='av', bilde=spritesheet('bilder/game_over2.png', 320, 320, 0, i), tags=['gameoverBokstaver'])
+    bokstavBoks = Boks((i+1)*55, 200, 2500, 'bilder/game_over2.png', 320, 320, 0, i, state=HIDDEN, respawn='av', tags=['gameoverBokstav'])
     gameOverBokstaver.append(bokstavBoks)
 
 
@@ -258,7 +252,6 @@ for i in range(8):
 
 
 def gameloop(): 
-    
     if blå.state != NORMAL:
         gameOver()
     elif all(bot.state != NORMAL for bot in botListe):
@@ -295,7 +288,7 @@ def gameloop():
 
 
 frameNr = 0
-spillLengde = 90
+spillLengde = 200
 framerate = 1/60
 tid = startTid = time.time()
 
