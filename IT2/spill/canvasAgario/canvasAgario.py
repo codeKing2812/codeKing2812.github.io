@@ -44,22 +44,25 @@ class Boks:
         return (sqrt(self.masse))/2
 
 
-    def resizeBilde(self):
-        self.bilde = self.bilde.resize((round(self.bredde*2), round(self.bredde*2)))
-        self.bildeTk = ImageTk.PhotoImage(self.bilde)
+    def tegnBilde(self):
+        self.bildeTk = ImageTk.PhotoImage(self.bilde.resize((round(self.bredde*2), round(self.bredde*2))))
+        c.create_image(self.x, self.y, image=self.bildeTk, state=self.state, tags=tuple(self.tags))
+        app.update()
 
 
     def tegn(self):
         if self.bilde:
-            self.resizeBilde()
-            c.create_image(self.x, self.y, image=self.bildeTk, state=self.state, tags=tuple(self.tags))
+            self.tegnBilde()
         else: 
             c.create_rectangle(self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde, fill=self.farge, state=self.state, tags=tuple(self.tags))
     
 
     def endreState(self, state):
         self.state = state
-        c.itemconfig(self.tags[0], state=state)
+        if self.bilde:
+            self.tegnBilde()
+        else: c.itemconfig(self.tags[0], state=state)
+
 
 
     def oppdater(self):
@@ -67,7 +70,9 @@ class Boks:
             global frameNr
             if frameNr > self.startFrame + randint(600, 1200):
                 if self.tags.index('mat') > 0:
-                    c.coords(self.tags[0], randint(0, 500), randint(0, 500))
+                    self.x = randint(0,500)
+                    self.y =  randint(0,500)
+                    c.coords(self.tags[0], self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde)
                 self.endreState(NORMAL)
                 self.respawn = 'på'
     
@@ -138,8 +143,8 @@ class Spiller(Boks):
         self.y = self.y + self.yv
         
         if self.bilde:
-            # self.bilde.resize((round(self.bredde*2), round(self.bredde*2)))
             c.coords(self.tags[0], self.x, self.y)
+            self.tegnBilde()
 
         else: 
             c.coords(self.tags[0], self.x-self.bredde, self.y-self.bredde, self.x+self.bredde, self.y+self.bredde)
@@ -150,9 +155,8 @@ class Spiller(Boks):
             self.masse += annen.masse
             annen.dø()
 
-            # if self.bilde: # gjør bildet større siden massen er større
-            #     self.bilde = ImageTk.PhotoImage(ImageTk.getimage(self.bilde).resize((round(self.bredde*2), round(self.bredde*2))))
-
+            if self.bilde:
+                self.tegnBilde()
 
 
 
@@ -201,7 +205,7 @@ def absRef(relRef): # funksjon for å finne absolutt referanse til en fil fra re
 spillSlutt = False
 def gameOver():
     global spillSlutt, alleBokser
-
+    
     if spillSlutt == False:
         for bokstav in gameOverBokstaver:
             bokstav.endreState(NORMAL) 
@@ -220,10 +224,10 @@ def spritesheet(sheetRef, bildeBredde, bildeHøyde, bildeNr, bildeRad):
 #
 
 
-bot1 = Bot('red', randint(0, 500), 100, 500, tags=['bot1'])
-bot2 = Bot('red', randint(0, 500), 200, 500, tags=['bot2'])
-bot3 = Bot('red', randint(0, 500), 300, 500, tags=['bot3'])
-bot4 = Bot('red', randint(0, 500), 400, 500, tags=['bot4'])
+bot1 = Bot(None, randint(0, 500), 100, 500, bilde=spritesheet('bilder/spillere2.png', 320, 320, 0, 1), tags=['bot1'])
+bot2 = Bot(None, randint(0, 500), 200, 500, bilde=spritesheet('bilder/spillere2.png', 320, 320, 0, 1), tags=['bot2'])
+bot3 = Bot(None, randint(0, 500), 300, 500, bilde=spritesheet('bilder/spillere2.png', 320, 320, 0, 1), tags=['bot3'])
+bot4 = Bot(None, randint(0, 500), 400, 500, bilde=spritesheet('bilder/spillere2.png', 320, 320, 0, 1), tags=['bot4'])
 
 botListe = [bot1, bot2, bot3, bot4]
 
@@ -254,7 +258,12 @@ for i in range(8):
 
 
 def gameloop(): 
-    global frameNr
+    
+    if blå.state != NORMAL:
+        gameOver()
+    elif all(bot.state != NORMAL for bot in botListe):
+        gameOver()
+    
 
     for spiller in spillerListe:
         for boks in alleBokser:
@@ -281,12 +290,7 @@ def gameloop():
         blå.yv = -0.5
     else: blå.yv = 0
 
-
-    if blå.state != NORMAL:
-        gameOver()
-    elif all(bot.state != NORMAL for bot in botListe):
-        gameOver()
-
+    global frameNr
     frameNr+=1
 
 
@@ -300,8 +304,8 @@ while tid < startTid + spillLengde: # til tiden er ute
         gameloop()
         tid += framerate 
 
-        app.update_idletasks()
         app.update()
+        app.update_idletasks()
 
 gameOver()
          
