@@ -41,7 +41,7 @@ class Boks:
         self.state = state
         self.respawn = respawn
 
-        self.startFrame = 0
+        self.respawnFrame = 0
 
         self.tegnBilde()
 
@@ -65,15 +65,18 @@ class Boks:
 
 
     def oppdater(self):
+
         if self.respawn == 'aktiv':
             global frameNr
-            if frameNr > self.startFrame + randint(600, 1200):
-                if 'mat' in self.tags:
-                    self.x = randint(0,500)
-                    self.y =  randint(0,500)
-                    c.coords(self.tags[0], self.x, self.y)
+            if frameNr > self.respawnFrame:
+                self.x = randint(0,500)
+                self.y = randint(0,500)
+                c.coords(self.tags[0], self.x, self.y)
                 self.endreState(NORMAL)
                 self.respawn = 'på'
+                if 'bot' in self.tags and not spillSlutt:
+                    self.masse = 500
+
     
 
     def dø(self):
@@ -81,7 +84,7 @@ class Boks:
 
         if self.respawn == 'på':
             global frameNr
-            self.startFrame = frameNr
+            self.respawnFrame = frameNr + randint(600, 1200)
             self.respawn = 'aktiv'
 
 
@@ -123,18 +126,21 @@ class Spiller(Boks):
 
 
     def holdPåKartet(self):   
-        if self.x <= 0:
-            self.xv = 0.1
-        elif self.x >= 500:
-            self.xv = -0.1
+        if self.x - self.bredde <= 0:
+            self.xv = 1
+        elif self.x + self.bredde >= 500:
+            self.xv = -1
 
-        if self.y <= 0:
-            self.yv = 0.1
-        elif self.y >= 500:
-            self.yv = -0.1
+        if self.y - self.bredde<= 0:
+            self.yv = 1
+        elif self.y + self.bredde >= 500:
+            self.yv = -1
     
 
-    def flytt(self):
+    def flytt(self): 
+
+        self.xv = self.xv * 10*(self.masse)**-0.6
+        self.yv = self.yv * 10*(self.masse)**-0.6
 
         self.holdPåKartet()
 
@@ -148,8 +154,8 @@ class Spiller(Boks):
     def spis(self, annen):
         if annen.state == self.state == NORMAL and self.masse > annen.masse:
             self.masse += annen.masse
+            print(self.tags[0], self.masse)
             annen.dø()
-
             self.tegnBilde()
 
 
@@ -177,14 +183,14 @@ class Bot(Spiller):
                     mål = annen
 
         if self.x < mål.x:
-            self.xv = 0.3
+            self.xv = 3
         else :
-            self.xv = -0.3
+            self.xv = -3
             
         if self.y < mål.y:
-            self.yv = 0.3
+            self.yv = 3
         else :
-            self.yv = -0.3
+            self.yv = -3
 
 
 #
@@ -218,14 +224,14 @@ def spritesheet(sheetRef, bredde, bildeHøyde, kolonne, rad):
 #
 
 
-bot1 = Bot(randint(0, 500), 100, 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot1'])
-bot2 = Bot(randint(0, 500), 100, 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot2'])
-bot3 = Bot(randint(0, 500), 100, 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot3'])
-bot4 = Bot(randint(0, 500), 100, 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot4'])
+bot1 = Bot(randint(0, 500), randint(0, 500), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot1'])
+bot2 = Bot(randint(0, 500), randint(0, 500), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot2'])
+bot3 = Bot(randint(0, 500), randint(0, 500), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot3'])
+bot4 = Bot(randint(0, 500), randint(0, 500), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot4'])
 
 botListe = [bot1, bot2, bot3, bot4]
 
-blå = Spiller( 250, 250, 500, 'bilder/spillere2.png', 320, 320, 0, 0, tags=['blå'])
+blå = Spiller(250, 250, 500, 'bilder/spillere2.png', 320, 320, 0, 0, tags=['blå'])
 
 spillerListe = [blå] + botListe
 
@@ -272,15 +278,15 @@ def gameloop():
 
 
     if keyboard.is_pressed('Right'):
-        blå.xv = 0.5
+        blå.xv = 3
     elif keyboard.is_pressed('Left'):
-        blå.xv = -0.5
+        blå.xv = -3
     else: blå.xv = 0
 
     if keyboard.is_pressed('Down'):
-        blå.yv = 0.5
+        blå.yv = 3
     elif keyboard.is_pressed('Up'):
-        blå.yv = -0.5
+        blå.yv = -3
     else: blå.yv = 0
 
     global frameNr
