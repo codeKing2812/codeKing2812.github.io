@@ -11,10 +11,13 @@ import os
 ########################################################## TKINTER SETUP ##################################################################################
 #
 
+canvasBredde = 500
+canvasHøyde = 500
+
 
 app = Tk()
-app.geometry("500x500")
-c = Canvas(app, width=500, height=500, background='beige')
+app.geometry(f"{canvasBredde}x{canvasHøyde}")
+c = Canvas(app, width=canvasBredde, height=canvasHøyde, background='beige')
 c.pack()
 
 
@@ -29,33 +32,43 @@ class Boks:
         self.y = y
         self.masse = masse
 
-        self.bilde = bilde
+        self.bilde = Image.open(absRef(bilde))
         self.bildeBredde = bildeBredde
         self.bildeHøyde = bildeHøyde
         self.bildeKolonne = bildeKolonne
         self.bildeRad = bildeRad
-        self.bilde = spritesheet(self.bilde, self.bildeBredde, self.bildeHøyde, self.bildeKolonne, self.bildeRad)
         self.bildeTk = None
-
         self.tags = tags + ['boks']
         self.state = state
         self.respawn = respawn
 
         self.respawnFrame = 0
 
+        self.oppdaterBilde()
         self.tegnBilde()
-
 
     @property
     def bredde(self):
         return (sqrt(self.masse))/2
+    
+    
+    def oppdaterBilde(self, rad=None, kolonne=None, bredde=None, høyde=None):
+        if rad:
+            self.bildeRad = rad
+        if kolonne:
+            self.bildeKolonne = kolonne
+        if bredde:
+            self.bildeBredde = bredde
+        if høyde:
+            self.bildeHøyde = høyde
+        
+        self.bildeCrop = spritesheet(self.bilde, self.bildeBredde, self.bildeHøyde, self.bildeKolonne, self.bildeRad)
 
 
     def tegnBilde(self):
-        self.bildeTk = ImageTk.PhotoImage(self.bilde.resize((round(self.bredde*2), round(self.bredde*2))))
+        self.bildeTk = ImageTk.PhotoImage(self.bildeCrop.resize((round(self.bredde*2), round(self.bredde*2))))
         c.create_image(self.x, self.y, image=self.bildeTk, state=self.state, tags=tuple(self.tags))
         app.update()
-
 
 
     def endreState(self, state):
@@ -63,18 +76,16 @@ class Boks:
         self.tegnBilde()
 
 
-
     def oppdater(self):
-
-        if self.respawn == 'aktiv':
+        if self.respawn == 'aktiv' and not spillSlutt:
             global frameNr
             if frameNr > self.respawnFrame:
-                self.x = randint(0,500)
-                self.y = randint(0,500)
+                self.x = randint(0,canvasBredde)
+                self.y = randint(0,canvasHøyde)
                 c.coords(self.tags[0], self.x, self.y)
                 self.endreState(NORMAL)
                 self.respawn = 'på'
-                if 'bot' in self.tags and not spillSlutt:
+                if 'bot' in self.tags:
                     self.masse = 500
 
     
@@ -128,19 +139,19 @@ class Spiller(Boks):
     def holdPåKartet(self):   
         if self.x - self.bredde <= 0:
             self.xv = 1
-        elif self.x + self.bredde >= 500:
+        elif self.x + self.bredde >= canvasBredde:
             self.xv = -1
 
         if self.y - self.bredde<= 0:
             self.yv = 1
-        elif self.y + self.bredde >= 500:
+        elif self.y + self.bredde >= canvasHøyde:
             self.yv = -1
     
 
     def flytt(self): 
 
-        self.xv = self.xv * 10*(self.masse)**-0.6
-        self.yv = self.yv * 10*(self.masse)**-0.6
+        self.xv = self.xv * 1.3*(self.masse)**-0.3
+        self.yv = self.yv * 1.3*(self.masse)**-0.3
 
         self.holdPåKartet()
 
@@ -213,8 +224,7 @@ def gameOver():
         alleBokser = gameOverBokstaver + spillerListe + matListe
 
 
-def spritesheet(sheetRef, bredde, bildeHøyde, kolonne, rad):
-    sheet = Image.open(absRef(sheetRef))
+def spritesheet(sheet, bredde, bildeHøyde, kolonne, rad):
     bilde = sheet.crop([kolonne*bredde, rad*bildeHøyde, kolonne*bredde+bredde, rad*bildeHøyde+bildeHøyde])
     return bilde
 
@@ -224,21 +234,21 @@ def spritesheet(sheetRef, bredde, bildeHøyde, kolonne, rad):
 #
 
 
-bot1 = Bot(randint(0, 500), randint(0, 500), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot1'])
-bot2 = Bot(randint(0, 500), randint(0, 500), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot2'])
-bot3 = Bot(randint(0, 500), randint(0, 500), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot3'])
-bot4 = Bot(randint(0, 500), randint(0, 500), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot4'])
+bot1 = Bot(randint(0, canvasBredde), randint(0, canvasHøyde), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot1'])
+bot2 = Bot(randint(0, canvasBredde), randint(0, canvasHøyde), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot2'])
+bot3 = Bot(randint(0, canvasBredde), randint(0, canvasHøyde), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot3'])
+bot4 = Bot(randint(0, canvasBredde), randint(0, canvasHøyde), 500, 'bilder/spillere2.png', 320, 320, 0, 1, tags=['bot4'])
 
 botListe = [bot1, bot2, bot3, bot4]
 
-blå = Spiller(250, 250, 500, 'bilder/spillere2.png', 320, 320, 0, 0, tags=['blå'])
+blå = Spiller(250, 250, 600, 'bilder/spillere2.png', 320, 320, 0, 0, tags=['blå'])
 
 spillerListe = [blå] + botListe
 
 matListe = []
 for i in range(25):
     tag = 'mat' + str(i)
-    mat = Boks(randint(0, 500),randint(0, 500), 100, 'bilder/mat.png', 320, 320, 0, 0, tags=[tag, 'mat'])
+    mat = Boks(randint(0, canvasBredde),randint(0, canvasHøyde), 150, 'bilder/mat.png', 320, 320, 0, 0, tags=[tag, 'mat'])
     matListe.append(mat)
 
 alleBokser = spillerListe + matListe 
@@ -279,14 +289,19 @@ def gameloop():
 
     if keyboard.is_pressed('Right'):
         blå.xv = 3
+        blå.oppdaterBilde(kolonne=4)
     elif keyboard.is_pressed('Left'):
         blå.xv = -3
+        blå.oppdaterBilde(kolonne=3)
     else: blå.xv = 0
 
     if keyboard.is_pressed('Down'):
         blå.yv = 3
+        blå.oppdaterBilde(kolonne=2)
     elif keyboard.is_pressed('Up'):
         blå.yv = -3
+        blå.oppdaterBilde(kolonne=1)
+        
     else: blå.yv = 0
 
     global frameNr
@@ -294,11 +309,11 @@ def gameloop():
 
 
 frameNr = 0
-spillLengde = 200
+spillLengde = 20
 framerate = 1/60
 tid = startTid = time.time()
 
-while tid < startTid + spillLengde: # til tiden er ute
+while time.time() < startTid + spillLengde: # til tiden er ute
     if time.time() > tid: # kjør frame
         gameloop()
         tid += framerate 
@@ -307,6 +322,7 @@ while tid < startTid + spillLengde: # til tiden er ute
         app.update_idletasks()
 
 gameOver()
+time.sleep(2)
          
 
 print('fps:', frameNr/spillLengde)
