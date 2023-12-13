@@ -3,7 +3,7 @@ import json
 
 nøkkel = '399c2091-bd5d-49da-a397-01796c492efa'
 
-api_url = 'https://www.vegvesen.no/ws/no/vegvesen/kjoretoy/felles/datautlevering/enkeltoppslag/kjoretoydata?kjennemerke=SP26051'
+api_url = 'https://www.vegvesen.no/ws/no/vegvesen/kjoretoy/felles/datautlevering/enkeltoppslag/kjoretoydata?kjennemerke=SP26055'
 
 headers = {"SVV-Authorization" : "Apikey 399c2091-bd5d-49da-a397-01796c492efa"}
 
