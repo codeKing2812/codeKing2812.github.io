@@ -11,7 +11,7 @@ import os
 ########################################################## TKINTER SETUP ##################################################################################
 #
 
-canvasBredde = 500
+canvasBredde = 800
 canvasHøyde = 500
 
 
@@ -178,15 +178,18 @@ class Bot(Spiller):
  
     def jakt(self, alleMål, hovedMål):
         minsteAvstand = 100000
+        mål = None
 
+        
         for annen in hovedMål: # finn den nærmeste av hovedmålene
             avstand = self.avstand(annen)
             if avstand < minsteAvstand and annen.state == NORMAL:
                 minsteAvstand = avstand
                 mål = annen 
 
-        if mål.masse >= self.masse : # hvis den ikke er spiselig
+        if not mål or mål.masse >= self.masse : # hvis den ikke er spiselig
             minsteAvstand = 100000
+            
             for annen in alleMål: #finn det nærmeste som er spiselig 
                 avstand = self.avstand(annen)
                 if avstand < minsteAvstand and annen.masse < self.masse and annen.state == NORMAL:
@@ -195,13 +198,17 @@ class Bot(Spiller):
 
         if self.x < mål.x:
             self.xv = 3
+            self.oppdaterBilde(kolonne=4)
         else :
             self.xv = -3
+            self.oppdaterBilde(kolonne=3)
             
         if self.y < mål.y:
             self.yv = 3
+            self.oppdaterBilde(kolonne=2)
         else :
             self.yv = -3
+            self.oppdaterBilde(kolonne=1)
 
 
 #
@@ -267,7 +274,11 @@ for i in range(8):
 #
 
 
-def gameloop(): 
+def gameloop():
+    global frameNr
+    frameNr+=1 
+
+
     if blå.state != NORMAL:
         gameOver()
     elif all(bot.state != NORMAL for bot in botListe):
@@ -287,29 +298,27 @@ def gameloop():
         boks.oppdater()
 
 
-    if keyboard.is_pressed('Right'):
+    if keyboard.is_pressed('Right') or keyboard.is_pressed('d'):
         blå.xv = 3
         blå.oppdaterBilde(kolonne=4)
-    elif keyboard.is_pressed('Left'):
+    elif keyboard.is_pressed('Left') or keyboard.is_pressed('a'):
         blå.xv = -3
         blå.oppdaterBilde(kolonne=3)
     else: blå.xv = 0
 
-    if keyboard.is_pressed('Down'):
+    if keyboard.is_pressed('Down') or keyboard.is_pressed('s'):
         blå.yv = 3
         blå.oppdaterBilde(kolonne=2)
-    elif keyboard.is_pressed('Up'):
+    elif keyboard.is_pressed('Up') or keyboard.is_pressed('w'):
         blå.yv = -3
         blå.oppdaterBilde(kolonne=1)
         
     else: blå.yv = 0
 
-    global frameNr
-    frameNr+=1
 
 
 frameNr = 0
-spillLengde = 20
+spillLengde = 300
 framerate = 1/60
 tid = startTid = time.time()
 
