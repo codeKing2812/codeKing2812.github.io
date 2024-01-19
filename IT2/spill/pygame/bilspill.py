@@ -13,12 +13,12 @@ def spritesheet(sheet, sheetBredde, sheetHøyde, kolonne, rad):
     bilde.blit(sheet, (0, 0), (kolonne*sheetBredde, rad*sheetHøyde, kolonne*sheetBredde+sheetBredde, rad*sheetHøyde+sheetHøyde))
     return bilde
 
-def spritesheetTilListe(sheetRef, bredde, høyde, antall, skaler):
+def spritesheetTilListe(sheetRef, bredde, høyde, antall, skalar):
     sheet = pg.image.load(sheetRef)
     tempListe = []
     for i in range(antall):
         bilde = spritesheet(sheet, bredde, høyde, 0, i)
-        bilde = pg.transform.scale_by(bilde, skaler)
+        bilde = pg.transform.scale_by(bilde, skalar)
         tempListe.append(bilde)
 
     return tempListe
@@ -30,14 +30,14 @@ def spritesheetTilListe(sheetRef, bredde, høyde, antall, skaler):
 pg.init()
 
 # Angir hvilken skrifttype og tekststørrelse vi vil bruke på tekst
-font = pg.font.SysFont("Arial", 24)
+font = pg.font.Font(absRef('fonter/ka1.ttf'), 24)
 
 # Oppretter et vindu
-vinduBredde = 1000
+vinduBredde = 800
 vinduHøyde  = 600
 vindu = pg.display.set_mode([vinduBredde, vinduHøyde])
 
-bgListe = spritesheetTilListe(absRef('bilder/bakgrunn.png'), 100, 60, 3, 10)
+bgListe = spritesheetTilListe(absRef('bilder/veiSmal.png'), 80, 60, 3, 10)
 bgBildeNr = 0
 
 
@@ -45,11 +45,12 @@ bgBildeNr = 0
 
 
 class Sprite(pg.sprite.Sprite):
-    def __init__(self, bildeListe, bildeNr, x, y, skaler=1):
+    def __init__(self, bildeListe, bildeNr, x, y, posisjon, skalar=1):
         self.bildeListe = bildeListe
         self.x = x
         self.y = y
-        self.skaler = skaler
+        self.posisjon = posisjon
+        self.skalar = skalar
         self.xv = 0
         self.yv = 0
 
@@ -58,44 +59,51 @@ class Sprite(pg.sprite.Sprite):
 
     @property
     def bredde(self):
-        return self.skaler*self.originalBilde.get_width()
+        return self.skalar*self.originalBilde.get_width()
     
     @property
     def høyde(self):
-        return self.skaler*self.originalBilde.get_height()
+        return self.skalar*self.originalBilde.get_height()
         
     def oppdater(self):
         self.x += self.xv
         self.y += self.yv
         vindu.blit(self.bilde, (self.x, self.y))
+
+        self.spesifikOppdater()
 
 
 
 class Hindring(Sprite):
-    def __init__(self, bildeListe, bildeNr, x, y, fart, skaler):
-        super().__init__(bildeListe, bildeNr, x, y, skaler)
+    def __init__(self, bildeListe, bildeNr, x, y, fart, posisjon, skalar):
+        super().__init__(bildeListe, bildeNr, x, y, posisjon, skalar)
 
+        # self.xv = xv
+        # self.yv = yv
         self.orginal_x = x
         self.orginal_y = y
         self.fart = fart
     
-    def oppdater(self):
-        self.komIMot()
-
-        self.x += self.xv
-        self.y += self.yv
-
-        vindu.blit(self.bilde, (self.x, self.y))
+    def spesifikOppdater(self):
+        if f40.posisjon + 10 > self.posisjon:
+            self.komIMot()
 
     def komIMot(self):
         if self.y > vinduHøyde or self.x + self.bredde < 0 or self.x > vinduBredde:
-            self.skaler = 0.1
-            self.y = self.orginal_y
-            self.x = self.orginal_x
+            self.xv = 0
+            self.yv = 0
+
         
-        self.skaler += 0.02
-        self.bilde = pg.transform.scale_by(self.originalBilde, self.skaler)
-        self.x += -(self.bredde/2 - (self.skaler-0.02)*self.originalBilde.get_width()/2)
+
+        self.yv = f40.fart/100
+        if self.x < vinduBredde/2:
+            self.xv = - self.yv/10
+        else:
+            self.xv = self.yv/10
+        
+        self.skalar += 0.02
+        self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
+        self.x += -(self.bredde/2 - (self.skalar-0.02)*self.originalBilde.get_width()/2)
         
         
 
@@ -104,44 +112,44 @@ class Hindring(Sprite):
 
 class Bil(Sprite):
     def __init__(self, bildeListe, bildeNr, x, y, fart):
-        super().__init__(bildeListe, bildeNr, x, y)
+        super().__init__(bildeListe, bildeNr, x, y, 0)
 
         self.fart = fart
+
+    def spesifikOppdater(self):
+        self.posisjon += self.fart/fps
 
     def oppdaterVeifart(self, fartsendring):
         global veifart
         self.fart += fartsendring
-        veifart = 100-self.fart
-
+        veifart = 200-self.fart
+ 
         if fartsendring > 0:
-            self.skaler -= 0.05
+            self.skalar -= 0.05
         else:
-            self.skaler += 0.05
+            self.skalar += 0.05
         
-        self.bilde = pg.transform.scale_by(self.originalBilde, self.skaler)
+        self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
 
-        print('oppdaterVeifart')
+        print('oppdaterVeifart',  veifart)
 
         pg.time.set_timer(OPPDATERBG, veifart)
 
 
 bilBilde = spritesheetTilListe(absRef('bilder/f40.png'), 32, 16, 1, 8)
-f40 = Bil(bilBilde, 0, vinduBredde/2, 450, 0)
-
+f40 = Bil(bilBilde, 0, vinduBredde/2, 450, 100)
 kaktusBilde = spritesheetTilListe(absRef('bilder/kaktus.png'), 16, 16, 1, 4)
-kaktus = Hindring(kaktusBilde, 0, 400, 300, 0, 0.1)
-kaktus.yv = 0.3
-kaktus.xv = -2
+kaktus = Hindring(kaktusBilde, 0, 400, 300, 0, 1000, 0.1)
 
-buskBilde = spritesheetTilListe(absRef('bilder/døBusk.png'), 160, 160, 1, 0.3)
-busk = Hindring(buskBilde, 0, 600, 300, 0, 0.1)
-busk.yv = 0.3
-busk.xv = 2
+buskBilde = spritesheetTilListe(absRef('bilder/busk.png'), 16, 16, 1, 3)
+busk = Hindring(buskBilde, 0, 600, 300, 0, 2000, 0.1)
 
 
 ######################### gameloop ###################################
 
+
 clock = pg.time.Clock()
+fps = 60
 PAUSE = False
 spillSlutt = False
 
@@ -187,13 +195,22 @@ while not spillSlutt and not PAUSE:
                 f40.xv = 0
 
 
+    fartTekst = font.render(str(f40.fart) + ' kmt', True, (0,0,0), None)
+    posisjonTekst = font.render(str(round(f40.posisjon)) + ' m', True, (0,0,0), None)
+
+
+
     vindu.blit(bgListe[bgBildeNr], (0,0))
+
+    vindu.blit(fartTekst, (10, 10))
+    vindu.blit(posisjonTekst, (10, 40))
+
     f40.oppdater()
     kaktus.oppdater()
     busk.oppdater()
         
     pg.display.flip()
-    clock.tick(60)
+    clock.tick(fps)
 
 
 pg.quit()
