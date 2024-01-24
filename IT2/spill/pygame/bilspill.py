@@ -37,7 +37,7 @@ vinduBredde = 800
 vinduHøyde  = 600
 vindu = pg.display.set_mode([vinduBredde, vinduHøyde])
 
-bgListe = spritesheetTilListe(absRef('bilder/veiSmal.png'), 80, 60, 3, 10)
+bgListe = spritesheetTilListe(absRef('bilder/veiSmalGrå.png'), 80, 60, 3, 10)
 bgBildeNr = 0
 
 
@@ -45,17 +45,20 @@ bgBildeNr = 0
 
 
 class Sprite(pg.sprite.Sprite):
-    def __init__(self, bildeListe, bildeNr, x, y, posisjon, skalar=1):
+    def __init__(self, bildeListe, bildeNr, x, y, posisjon, skalar=1, synlig=True):
         self.bildeListe = bildeListe
+        self.bildeNr = bildeNr
         self.x = x
         self.y = y
         self.posisjon = posisjon
         self.skalar = skalar
+        self.synlig = synlig
         self.xv = 0
         self.yv = 0
 
         self.bilde = bildeListe[bildeNr]
         self.originalBilde = self.bilde
+
 
     @property
     def bredde(self):
@@ -66,20 +69,24 @@ class Sprite(pg.sprite.Sprite):
         return self.skalar*self.originalBilde.get_height()
         
     def oppdater(self):
-        self.x += self.xv
-        self.y += self.yv
-        vindu.blit(self.bilde, (self.x, self.y))
+        self.originalBilde = self.bildeListe[self.bildeNr]
 
         self.spesifikOppdater()
+
+        self.x += self.xv
+        self.y += self.yv
+
+        self.rect = self.bilde.get_rect(center=(self.x, self.y))
+
+        if self.synlig:
+            vindu.blit(self.bilde, self.rect)
 
 
 
 class Hindring(Sprite):
-    def __init__(self, bildeListe, bildeNr, x, y, fart, posisjon, skalar):
-        super().__init__(bildeListe, bildeNr, x, y, posisjon, skalar)
+    def __init__(self, bildeListe, bildeNr, x, y, fart, posisjon, skalar, synlig=False):
+        super().__init__(bildeListe, bildeNr, x, y, posisjon, skalar, synlig)
 
-        # self.xv = xv
-        # self.yv = yv
         self.orginal_x = x
         self.orginal_y = y
         self.fart = fart
@@ -90,22 +97,23 @@ class Hindring(Sprite):
 
     def komIMot(self):
         if self.y > vinduHøyde or self.x + self.bredde < 0 or self.x > vinduBredde:
+            # hvis utenfor
             self.xv = 0
             self.yv = 0
+            self.synlig = False
 
-        
+        else: # hvis den er på skjermen
+            self.synlig = True
 
-        self.yv = f40.fart/100
-        if self.x < vinduBredde/2:
-            self.xv = - self.yv/10
-        else:
-            self.xv = self.yv/10
-        
-        self.skalar += 0.02
-        self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
-        self.x += -(self.bredde/2 - (self.skalar-0.02)*self.originalBilde.get_width()/2)
-        
-        
+            self.yv = f40.fart/100
+            if self.x < vinduBredde/2:
+                self.xv = - self.yv*2.2
+            else:
+                self.xv = self.yv*2.2
+            
+            self.skalar += f40.fart*0.0002
+            self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
+               
 
 
 
@@ -126,8 +134,10 @@ class Bil(Sprite):
  
         if fartsendring > 0:
             self.skalar -= 0.05
+            self.y -= 5
         else:
             self.skalar += 0.05
+            self.y += 5
         
         self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
 
@@ -136,13 +146,15 @@ class Bil(Sprite):
         pg.time.set_timer(OPPDATERBG, veifart)
 
 
-bilBilde = spritesheetTilListe(absRef('bilder/f40.png'), 32, 16, 1, 8)
-f40 = Bil(bilBilde, 0, vinduBredde/2, 450, 100)
-kaktusBilde = spritesheetTilListe(absRef('bilder/kaktus.png'), 16, 16, 1, 4)
-kaktus = Hindring(kaktusBilde, 0, 400, 300, 0, 1000, 0.1)
+bilBilde = spritesheetTilListe(absRef('bilder/f40.png'), 32, 32, 1, 8)
+f40 = Bil(bilBilde, 0, vinduBredde/2, 550, 100)
+
+kaktusBilde = spritesheetTilListe(absRef('bilder/kaktus2.png'), 16, 24, 3, 3)
+kaktus = Hindring(kaktusBilde, 0, 300, 300, 0, 1000, 0.1)
+kaktus.bildeNr = 1
 
 buskBilde = spritesheetTilListe(absRef('bilder/busk.png'), 16, 16, 1, 3)
-busk = Hindring(buskBilde, 0, 600, 300, 0, 2000, 0.1)
+busk = Hindring(buskBilde, 0, 500, 300, 0, 500, 0.1)
 
 
 ######################### gameloop ###################################
@@ -183,9 +195,9 @@ while not spillSlutt and not PAUSE:
             
 
             if event.key == pg.K_LEFT or event.key == pg.K_a:
-                f40.xv = -4
+                f40.xv = -5
             if event.key == pg.K_RIGHT or event.key == pg.K_d:
-                f40.xv = 4
+                f40.xv = 5
 
             if event.key == pg.K_SPACE:
                 PAUSE = not PAUSE    
