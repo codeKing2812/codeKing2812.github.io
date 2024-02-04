@@ -1,4 +1,6 @@
 import pygame as pg
+from pygame.locals import *
+import time
 import os
 
 
@@ -33,19 +35,20 @@ pg.init()
 font = pg.font.Font(absRef('fonter/ka1.ttf'), 24)
 
 # Oppretter et vindu
-vinduBredde = 800
-vinduHøyde  = 600
+vinduBredde = 700
+vinduHøyde  = 700
 vindu = pg.display.set_mode([vinduBredde, vinduHøyde])
 
-bgListe = spritesheetTilListe(absRef('bilder/veiSmalGrå.png'), 80, 60, 3, 10)
-bgBildeNr = 0
+
+######################### definering av klasser ###################################
 
 
-######################### klasser ###################################
 
 
 class Sprite(pg.sprite.Sprite):
     def __init__(self, bildeListe, bildeNr, x, y, posisjon, skalar=1, synlig=True):
+        pg.sprite.Sprite.__init__(self)
+        
         self.bildeListe = bildeListe
         self.bildeNr = bildeNr
         self.x = x
@@ -68,7 +71,8 @@ class Sprite(pg.sprite.Sprite):
     def høyde(self):
         return self.skalar*self.originalBilde.get_height()
         
-    def oppdater(self):
+
+    def update(self):
         self.originalBilde = self.bildeListe[self.bildeNr]
 
         self.spesifikOppdater()
@@ -82,6 +86,17 @@ class Sprite(pg.sprite.Sprite):
             vindu.blit(self.bilde, self.rect)
 
 
+    def animer(self, msPerFrame, startFrame=0, sluttFrame=None):
+        if not sluttFrame:
+            sluttFrame=len(self.bildeListe)-1
+
+        global tid
+        print(tid, msPerFrame)
+        self.frameNr = startFrame + (tid // msPerFrame) #% (sluttFrame - startFrame)
+        print(self.frameNr)
+
+
+        
 
 class Hindring(Sprite):
     def __init__(self, bildeListe, bildeNr, x, y, fart, posisjon, skalar, synlig=False):
@@ -91,9 +106,11 @@ class Hindring(Sprite):
         self.orginal_y = y
         self.fart = fart
     
+
     def spesifikOppdater(self):
         if f40.posisjon + 10 > self.posisjon:
             self.komIMot()
+
 
     def komIMot(self):
         if self.y > vinduHøyde or self.x + self.bredde < 0 or self.x > vinduBredde:
@@ -105,16 +122,15 @@ class Hindring(Sprite):
         else: # hvis den er på skjermen
             self.synlig = True
 
-            self.yv = f40.fart/100
+            self.yv = f40.fart/50
             if self.x < vinduBredde/2:
-                self.xv = - self.yv*2.2
+                self.xv = - self.yv*3.5
             else:
-                self.xv = self.yv*2.2
+                self.xv = self.yv*3.5
             
-            self.skalar += f40.fart*0.0002
+            self.skalar += f40.fart*0.0004
             self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
                
-
 
 
 
@@ -124,37 +140,63 @@ class Bil(Sprite):
 
         self.fart = fart
 
+
     def spesifikOppdater(self):
+        global målPosisjon
+
         self.posisjon += self.fart/fps
+
+        if self.posisjon >= målPosisjon:
+            self.gameOver()
+    
+
+    def gameOver(self):
+        global PAUSE
+        PAUSE = True
+
 
     def oppdaterVeifart(self, fartsendring):
         global veifart
-        self.fart += fartsendring
-        veifart = 200-self.fart
+        if veifart > 30 and veifart < 185:
+            self.fart += fartsendring
+            veifart = 200-self.fart
  
-        if fartsendring > 0:
-            self.skalar -= 0.05
-            self.y -= 5
-        else:
-            self.skalar += 0.05
-            self.y += 5
+            if fartsendring > 0:
+                self.skalar -= 0.007
+                self.y -= 2
+            else:
+                self.skalar += 0.007
+                self.y += 2
         
-        self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
+            self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
 
-        print('oppdaterVeifart',  veifart)
 
-        pg.time.set_timer(OPPDATERBG, veifart)
+
+######################### oprettelse av objekter ###################################
+
+
+bgListe = spritesheetTilListe(absRef('bilder/veiBred.png'), 140, 140, 3, 5)
+bakgrunn = Sprite(bgListe, 0, vinduBredde/2, vinduHøyde/2, 0)
 
 
 bilBilde = spritesheetTilListe(absRef('bilder/f40.png'), 32, 32, 1, 8)
-f40 = Bil(bilBilde, 0, vinduBredde/2, 550, 100)
+f40 = Bil(bilBilde, 0, bakgrunn.x, 550, 100)
 
-kaktusBilde = spritesheetTilListe(absRef('bilder/kaktus2.png'), 16, 24, 3, 3)
-kaktus = Hindring(kaktusBilde, 0, 300, 300, 0, 1000, 0.1)
-kaktus.bildeNr = 1
+
+kaktusBilde = spritesheetTilListe(absRef('bilder/kaktus2.png'), 16, 24, 2, 3)
+kaktuser = pg.sprite.Group()
+for i in range(10):
+    if i//2 == i/2:
+        nr = 0
+    else: 
+        nr = 1
+    kaktuser.add(Hindring(kaktusBilde, nr, 300, 300, 0, 600*i, 0.1))
+    
 
 buskBilde = spritesheetTilListe(absRef('bilder/busk.png'), 16, 16, 1, 3)
-busk = Hindring(buskBilde, 0, 500, 300, 0, 500, 0.1)
+busker = pg.sprite.Group()
+for i in range(20):
+    busker.add(Hindring(buskBilde, 0, 500, 300, 0, 400*i+100, 0.1))
 
 
 ######################### gameloop ###################################
@@ -165,62 +207,58 @@ fps = 60
 PAUSE = False
 spillSlutt = False
 
+målPosisjon = 3000
 veifart = 100
+
 OPPDATERBG = pg.USEREVENT + 1
 pg.time.set_timer(OPPDATERBG, veifart)
 
 while not spillSlutt and not PAUSE: 
+    tid = pg.time.get_ticks()
 
     for event in pg.event.get():
 
         # slutt spillet hvis vinduet lukkes
         if event.type == pg.QUIT:
             spillSlutt = True
+
+
+    # knappetrykk
+    trykkedeTaster = pg.key.get_pressed()
+
+    if trykkedeTaster[K_UP]:
+        f40.oppdaterVeifart(1)
+    if trykkedeTaster[K_DOWN]:
+        f40.oppdaterVeifart(-1)
+    
+    
+    if trykkedeTaster[K_LEFT] and trykkedeTaster[K_RIGHT]:
+        f40.xv = 0
+    elif trykkedeTaster[K_LEFT]:
+        f40.xv = -5
+    elif trykkedeTaster[K_RIGHT]:
+        f40.xv = 5
+    else: f40.xv = 0
         
-            
-        # animer bakgrunnen
-        if event.type == OPPDATERBG:
-            if bgBildeNr < len(bgListe)-1:
-                bgBildeNr += 1
-            else: bgBildeNr = 0
-
-
-        # knappetrykk
-        if event.type == pg.KEYDOWN:
-
-            if event.key == pg.K_UP or event.key == pg.K_w:
-                f40.oppdaterVeifart(5)
-            if event.key == pg.K_DOWN or event.key == pg.K_s:
-                f40.oppdaterVeifart(-5)
-            
-
-            if event.key == pg.K_LEFT or event.key == pg.K_a:
-                f40.xv = -5
-            if event.key == pg.K_RIGHT or event.key == pg.K_d:
-                f40.xv = 5
-
-            if event.key == pg.K_SPACE:
-                PAUSE = not PAUSE    
-
-        if event.type == pg.KEYUP:
-            if event.key == pg.K_LEFT or event.key == pg.K_RIGHT or event.key == pg.K_a or event.key == pg.K_d:
-                f40.xv = 0
+    if trykkedeTaster[K_SPACE]:
+        PAUSE = not PAUSE
 
 
     fartTekst = font.render(str(f40.fart) + ' kmt', True, (0,0,0), None)
     posisjonTekst = font.render(str(round(f40.posisjon)) + ' m', True, (0,0,0), None)
 
-
-
-    vindu.blit(bgListe[bgBildeNr], (0,0))
+    # print(veifart)
+    bakgrunn.animer(veifart)
+    vindu.blit(bgListe[bakgrunn.bildeNr], (0,0))
 
     vindu.blit(fartTekst, (10, 10))
     vindu.blit(posisjonTekst, (10, 40))
 
-    f40.oppdater()
-    kaktus.oppdater()
-    busk.oppdater()
+    kaktuser.update()
+    busker.update()
+    f40.update()
         
+
     pg.display.flip()
     clock.tick(fps)
 
