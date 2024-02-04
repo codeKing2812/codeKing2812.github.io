@@ -22,3 +22,4 @@ https://pixabay.com/music/synthwave-lady-of-the-80x27s-128379/ (musikk)
 GeoGebra Classic 6 (regresjon)
 
 
+PS: det er kanskje litt kjedelig, fordi jeg har lagt det opp slik at det skulle være to spilelre mot hverandre, men jeg kom aldri så langt...
