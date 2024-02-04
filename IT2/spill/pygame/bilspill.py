@@ -37,6 +37,16 @@ font = pg.font.Font(absRef('fonter/ka1.ttf'), 24)
 vinduBredde = 700
 vinduHøyde  = 700
 vindu = pg.display.set_mode([vinduBredde, vinduHøyde])
+pg.display.set_caption('RETRO RACER')
+
+
+######################### musikk og lyder ###################################
+
+
+pg.mixer.music.load(absRef('lyd/theme.mp3'))
+pg.mixer.music.play()
+
+skrens = pg.mixer.Sound(absRef('lyd/skrens.mp3'))
 
 
 ######################### definering av klasser ###################################
@@ -88,12 +98,12 @@ class Sprite(pg.sprite.Sprite):
             vindu.blit(self.bilde, self.rect)
 
 
-    def animer(self, msPerFrame, startFrame=0, sluttFrame=None):
-        if not sluttFrame:
-            sluttFrame=len(self.bildeListe)-1
+    def animer(self, msPerBilde, startBilde=0, sluttBilde=None):
+        if not sluttBilde:
+            sluttBilde=len(self.bildeListe)-1
 
         global tid
-        self.bildeNr = startFrame + (tid // msPerFrame) % (sluttFrame + 1 - startFrame)
+        self.bildeNr = startBilde + (tid // msPerBilde) % (sluttBilde + 1 - startBilde)
         self.bilde = self.bildeListe[self.bildeNr]
 
 
@@ -110,6 +120,9 @@ class Hindring(Sprite):
     
 
     def spesifikOppdater(self):
+        if self.rect.colliderect(f40.rect) and self.synlig:
+            f40.kræsj()
+
         if f40.posisjon + 10 > self.posisjon:
             self.komIMot()
 
@@ -139,7 +152,7 @@ class Hindring(Sprite):
 class Bil(Sprite):
     def __init__(self, bildeListe, bildeNr, x, y, fart):
         super().__init__(bildeListe, bildeNr, x, y, 0)
-
+        self.kræsjer = False
         self.fart = fart
 
 
@@ -150,7 +163,19 @@ class Bil(Sprite):
 
         if self.posisjon >= målPosisjon:
             self.gameOver()
+        
+        if self.kræsjer:
+            if self.fart > 10:
+                self.oppdaterVeifart(-5)
+            else: 
+                self.oppdaterVeifart(-self.fart)
+                self.kræsjer = False
+            
     
+    def kræsj(self):
+        pg.mixer.Channel(0).play(skrens)
+        self.kræsjer = True
+
 
     def gameOver(self):
         global PAUSE
@@ -159,18 +184,36 @@ class Bil(Sprite):
 
     def oppdaterVeifart(self, fartsendring):
         global veifart
-        if veifart > 30 and veifart < 185:
+        if self.fart > 5 and self.fart < 180:
             self.fart += fartsendring
-            veifart = 200-self.fart
+
+            # veifart = 200-self.fart
+            veifart = int(323*0.99**self.fart)
  
-            if fartsendring > 0:
-                self.skalar -= 0.007
-                self.y -= 2
-            else:
-                self.skalar += 0.007
-                self.y += 2
+            self.skalar += 0.007*-fartsendring
+            self.y += 2*-fartsendring
+             
+
+        elif self.fart <= 5 and fartsendring > 0:
+            self.fart += fartsendring
+
+            veifart = int(323*0.99**self.fart)
+ 
+            self.skalar += 0.007*-fartsendring
+            self.y += 2*-fartsendring
         
-            self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
+        elif self.fart >= 180 and fartsendring < 0:
+            self.fart += fartsendring
+
+            veifart = int(323*0.99**self.fart)
+ 
+            self.skalar += 0.007*-fartsendring
+            self.y += 2*-fartsendring
+
+        if self.fart == 0:
+            veifart = 10000000000
+
+        self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
 
 
 
@@ -209,57 +252,66 @@ fps = 60
 PAUSE = False
 spillSlutt = False
 
-målPosisjon = 3000
+målPosisjon = 10000
 veifart = 100
 
-OPPDATERBG = pg.USEREVENT + 1
-pg.time.set_timer(OPPDATERBG, veifart)
-
-while not spillSlutt and not PAUSE: 
+while not spillSlutt:
     tid = pg.time.get_ticks()
 
     for event in pg.event.get():
+            # slutt spillet hvis vinduet lukkes
+            if event.type == pg.QUIT:
+                spillSlutt = True
 
-        # slutt spillet hvis vinduet lukkes
-        if event.type == pg.QUIT:
-            spillSlutt = True
+            # pause på mellomrom
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                    PAUSE = not PAUSE
+            
 
 
-    # knappetrykk
-    trykkedeTaster = pg.key.get_pressed()
+    if PAUSE:
+        pauseTekst1 = font.render('pause', True, (0,0,0), None)
+        pauseTekst2 = font.render('trykk space for mer action', True, (0,0,0), None)
+        vindu.blit(pauseTekst1, pauseTekst1.get_rect(center=(bakgrunn.x, 300)))
+        vindu.blit(pauseTekst2, pauseTekst2.get_rect(center=(bakgrunn.x, 350)))
 
-    if trykkedeTaster[K_UP]:
-        f40.oppdaterVeifart(1)
-    if trykkedeTaster[K_DOWN]:
-        f40.oppdaterVeifart(-1)
-    
-    
-    if trykkedeTaster[K_LEFT] and trykkedeTaster[K_RIGHT]:
-        f40.xv = 0
-    elif trykkedeTaster[K_LEFT]:
-        f40.xv = -5
-    elif trykkedeTaster[K_RIGHT]:
-        f40.xv = 5
-    else: f40.xv = 0
+
+
+    else:  
+        # knappetrykk
+        trykkedeTaster = pg.key.get_pressed()
+
+        if trykkedeTaster[K_UP]:
+            f40.oppdaterVeifart(1)
+        if trykkedeTaster[K_DOWN]:
+            f40.oppdaterVeifart(-1)
         
-    if trykkedeTaster[K_SPACE]:
-        PAUSE = not PAUSE
-
-
-    fartTekst = font.render(str(f40.fart) + ' kmt', True, (0,0,0), None)
-    posisjonTekst = font.render(str(round(f40.posisjon)) + ' m', True, (0,0,0), None)
-
-    # print(veifart)
-    bakgrunn.animer(veifart)
-    bakgrunn.update()
-
-    vindu.blit(fartTekst, (10, 10))
-    vindu.blit(posisjonTekst, (10, 40))
-
-    kaktuser.update()
-    busker.update()
-    f40.update()
         
+        if trykkedeTaster[K_LEFT] and trykkedeTaster[K_RIGHT]:
+            f40.xv = 0
+        elif trykkedeTaster[K_LEFT] and f40.x > 0 and f40.fart > 0:
+            f40.xv = -5
+        elif trykkedeTaster[K_RIGHT] and f40.x < vinduBredde and f40.fart > 0:
+            f40.xv = 5
+        else: f40.xv = 0
+            
+
+        
+        # print(veifart)
+        bakgrunn.animer(veifart)
+        bakgrunn.update()
+
+        fartTekst = font.render(str(f40.fart) + ' kmt', True, (0,0,0), None)
+        posisjonTekst = font.render(str(round(f40.posisjon)) + ' m', True, (0,0,0), None)
+        vindu.blit(fartTekst, (10, 10))
+        vindu.blit(posisjonTekst, (10, 40))
+
+        kaktuser.update()
+        busker.update()
+        f40.update()
+            
+
 
     pg.display.flip()
     clock.tick(fps)
