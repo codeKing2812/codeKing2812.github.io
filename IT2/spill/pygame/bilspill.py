@@ -1,6 +1,5 @@
 import pygame as pg
 from pygame.locals import *
-import time
 import os
 
 
@@ -75,7 +74,10 @@ class Sprite(pg.sprite.Sprite):
     def update(self):
         self.originalBilde = self.bildeListe[self.bildeNr]
 
-        self.spesifikOppdater()
+        try:
+            self.spesifikOppdater()
+        except:
+            None
 
         self.x += self.xv
         self.y += self.yv
@@ -91,9 +93,9 @@ class Sprite(pg.sprite.Sprite):
             sluttFrame=len(self.bildeListe)-1
 
         global tid
-        print(tid, msPerFrame)
-        self.frameNr = startFrame + (tid // msPerFrame) #% (sluttFrame - startFrame)
-        print(self.frameNr)
+        self.bildeNr = startFrame + (tid // msPerFrame) % (sluttFrame + 1 - startFrame)
+        self.bilde = self.bildeListe[self.bildeNr]
+
 
 
         
@@ -249,7 +251,7 @@ while not spillSlutt and not PAUSE:
 
     # print(veifart)
     bakgrunn.animer(veifart)
-    vindu.blit(bgListe[bakgrunn.bildeNr], (0,0))
+    bakgrunn.update()
 
     vindu.blit(fartTekst, (10, 10))
     vindu.blit(posisjonTekst, (10, 40))
