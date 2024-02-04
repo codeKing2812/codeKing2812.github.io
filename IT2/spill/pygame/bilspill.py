@@ -44,9 +44,11 @@ pg.display.set_caption('RETRO RACER')
 
 
 pg.mixer.music.load(absRef('lyd/theme.mp3'))
+pg.mixer.music.set_volume(0.3)
 pg.mixer.music.play()
 
 skrens = pg.mixer.Sound(absRef('lyd/skrens.mp3'))
+skrens.set_volume(0.5)
 
 
 ######################### definering av klasser ###################################
@@ -162,7 +164,8 @@ class Bil(Sprite):
         self.posisjon += self.fart/fps
 
         if self.posisjon >= målPosisjon:
-            self.gameOver()
+            global IMÅL
+            IMÅL = True
         
         if self.kræsjer:
             if self.fart > 10:
@@ -176,11 +179,7 @@ class Bil(Sprite):
         pg.mixer.Channel(0).play(skrens)
         self.kræsjer = True
 
-
-    def gameOver(self):
-        global PAUSE
-        PAUSE = True
-
+        
 
     def oppdaterVeifart(self, fartsendring):
         global veifart
@@ -250,7 +249,9 @@ for i in range(20):
 clock = pg.time.Clock()
 fps = 60
 PAUSE = False
+IMÅL = False
 spillSlutt = False
+
 
 målPosisjon = 10000
 veifart = 100
@@ -263,18 +264,40 @@ while not spillSlutt:
             if event.type == pg.QUIT:
                 spillSlutt = True
 
-            # pause på mellomrom
+            # pause eller omstart på mellomrom
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
-                    PAUSE = not PAUSE
+
+                    if IMÅL:
+                        IMÅL = False
+                        PAUSE = False
+                        f40.posisjon = 0
+                        f40.oppdaterVeifart(100-f40.fart)
+                        pg.mixer.music.play()
+
+
+                    elif PAUSE:
+                        PAUSE = False
+                        pg.mixer.music.set_volume(0.3)
+
+                    else:
+                        PAUSE = True
+                
             
 
 
     if PAUSE:
+        pg.mixer.music.set_volume(0.1)
+
         pauseTekst1 = font.render('pause', True, (0,0,0), None)
         pauseTekst2 = font.render('trykk space for mer action', True, (0,0,0), None)
-        vindu.blit(pauseTekst1, pauseTekst1.get_rect(center=(bakgrunn.x, 300)))
-        vindu.blit(pauseTekst2, pauseTekst2.get_rect(center=(bakgrunn.x, 350)))
+        vindu.blit(pauseTekst1, pauseTekst1.get_rect(center=(bakgrunn.x, 200)))
+        vindu.blit(pauseTekst2, pauseTekst2.get_rect(center=(bakgrunn.x, 250)))
+
+
+    elif IMÅL:
+        målTekst = font.render('du er fremme! trykk space for omstart', True, (0,0,0), None)
+        vindu.blit(målTekst, målTekst.get_rect(center=(bakgrunn.x, 300)))
 
 
 
