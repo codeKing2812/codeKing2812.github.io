@@ -2,6 +2,11 @@ import requests as req
 import os
 import json
 
+import os
+def absRef(relRef): # funksjon for å finne absolutt referanse til en fil fra relativ referanse
+    return os.path.join(os.path.dirname(__file__), relRef)
+
+
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -31,7 +36,7 @@ for i in range(1000):
 
     data = response.content
 
-    fil = open('bilData.json', 'w')
+    fil = open(absRef('bilData.json'), 'w')
     fil.write(str(data)[2:-1])
     fil.close()
 
