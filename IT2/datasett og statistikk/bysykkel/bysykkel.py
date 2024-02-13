@@ -14,26 +14,33 @@ with open(absRef("sykkel.csv"), encoding="utf-8-sig") as fil:
 
     data = list(filinnhold)[1:-1]
     
-    start = []
-    for i in range(10): 
-        rad = csv.reader(data[i][0], delimiter=',')
 
-        print(type(rad))
-        # print(len(rad))
-        print(rad)
+
+start = []
+for i in range(300): 
+    rad = data[i][0].split(',')
     
+    start.append(rad[4])
 
 
+
+tellere = {}
+for plass in start:
+    if plass in tellere:
+        tellere[plass] +=1
+    else:
+        tellere[plass] = 1
     
+print(tellere)
 
-    # tellere = {}
-    # for i in start:
-    #     if tellere[i]:
-    #         tellere[i] +=1
-    #     else:
-    #         tellere[i] = 0
-    
-    # print(tellere)
 
-        
+# sortering som ikke funker enda:
+
+# mest = 0
+# for i in tellere.values():
+#     if i > mest:
+#         mest = i
+#         mestNavn = tellere[tellere.values().index(i)]
+
+# print(mestNavn, mest)
 
