@@ -1,5 +1,6 @@
 import pygame as pg
 from pygame.locals import *
+import random
 import os
 
 
@@ -73,6 +74,9 @@ class Sprite(pg.sprite.Sprite):
         self.bilde = bildeListe[bildeNr]
         self.originalBilde = self.bilde
 
+        self.rect = self.bilde.get_rect(center=(self.x, self.y))
+        self.kræsjRect = (self.rect.w, self.rect.h/2)
+
 
     @property
     def bredde(self):
@@ -95,6 +99,7 @@ class Sprite(pg.sprite.Sprite):
         self.y += self.yv
 
         self.rect = self.bilde.get_rect(center=(self.x, self.y))
+        self.kræsjRect = (self.rect.w, self.rect.h/2)
 
         if self.synlig:
             vindu.blit(self.bilde, self.rect)
@@ -118,11 +123,14 @@ class Hindring(Sprite):
 
         self.orginal_x = x
         self.orginal_y = y
+        self.avstandFraSenter = self.orginal_x - vinduBredde/2
+        print(self.avstandFraSenter)
+
         self.fart = fart
     
 
     def spesifikOppdater(self):
-        if self.rect.colliderect(f40.rect) and self.synlig:
+        if self.kræsjRect.colliderect(f40.kræsjRect) and self.synlig:
             f40.kræsj()
 
         if f40.posisjon + 10 > self.posisjon:
@@ -140,10 +148,8 @@ class Hindring(Sprite):
             self.synlig = True
 
             self.yv = f40.fart/50
-            if self.x < vinduBredde/2:
-                self.xv = - self.yv*3.5
-            else:
-                self.xv = self.yv*3.5
+
+            self.xv = self.avstandFraSenter/100 * self.yv*3.5 
             
             self.skalar += f40.fart*0.0004
             self.bilde = pg.transform.scale_by(self.originalBilde, self.skalar)
@@ -227,21 +233,25 @@ bilBilde = spritesheetTilListe(absRef('bilder/f40.png'), 32, 32, 1, 8)
 f40 = Bil(bilBilde, 0, bakgrunn.x, 550, 100)
 
 
-kaktusBilde = spritesheetTilListe(absRef('bilder/kaktus2.png'), 16, 24, 2, 3)
+kaktusBilder = spritesheetTilListe(absRef('bilder/kaktus.png'), 16, 24, 2, 3)
 kaktuser = pg.sprite.Group()
 for i in range(10):
     if i//2 == i/2:
         nr = 0
     else: 
         nr = 1
-    kaktuser.add(Hindring(kaktusBilde, nr, 300, 300, 0, 600*i, 0.1))
-    
+    kaktuser.add(Hindring(kaktusBilder, nr, 250, 300, 0, 600*i, 0.1))
+
 
 buskBilde = spritesheetTilListe(absRef('bilder/busk.png'), 16, 16, 1, 3)
 busker = pg.sprite.Group()
 for i in range(20):
-    busker.add(Hindring(buskBilde, 0, 500, 300, 0, 400*i+100, 0.1))
+    busker.add(Hindring(buskBilde, 0, 450, 300, 0, 400*i+100, 0.1))
 
+sperringBilder = spritesheetTilListe(absRef('bilder/sperring.png'), 16, 16, 3, 3)
+sperringer = pg.sprite.Group()
+for i in range(20):
+    sperringer.add(Hindring(sperringBilder, 0, random.randint(300, 400), 300, 0, 500*i+200, 0.1))
 
 ######################### gameloop ###################################
 
@@ -332,6 +342,7 @@ while not spillSlutt:
 
         kaktuser.update()
         busker.update()
+        sperringer.update()
         f40.update()
             
 
