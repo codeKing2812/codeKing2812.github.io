@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 
 import os
 def absRef(relRef): # funksjon for å finne absolutt referanse til en fil fra relativ referanse
@@ -15,32 +16,45 @@ with open(absRef("sykkel.csv"), encoding="utf-8-sig") as fil:
     data = list(filinnhold)[1:-1]
     
 
-
-start = []
-for i in range(300): 
-    rad = data[i][0].split(',')
+# skill ut startposisjon
     
+start = []
+for i in data: 
+    rad = rad[0].split(',')
     start.append(rad[4])
 
 
-
+# tell hvor mange turer som starter hver plass
+    
 tellere = {}
 for plass in start:
     if plass in tellere:
         tellere[plass] +=1
     else:
         tellere[plass] = 1
-    
+
 print(tellere)
+ 
+
+# sorteringsfunksjon
+
+toppTre = [('',0)] * 3
+print(toppTre)
+
+for i in tellere:
+    if tellere[i] >= toppTre[0][1]:
+
+        toppTre[2] = toppTre[1]
+        toppTre[1] = toppTre[0]
+        # flytt ned de som allerede er på listen
+
+        toppTre[0] = (i, tellere[i])
+        # legg til ny toppplassering
+
+        print(toppTre)
 
 
-# sortering som ikke funker enda:
-
-# mest = 0
-# for i in tellere.values():
-#     if i > mest:
-#         mest = i
-#         mestNavn = tellere[tellere.values().index(i)]
-
-# print(mestNavn, mest)
+print(toppTre[0][0], 'er mest brukt, med', toppTre[0][1], 'turer')
+print(toppTre[1][0], 'er nest mest brukt, med', toppTre[1][1], 'turer')
+print(toppTre[2][0], 'er tredje mest brukt, med', toppTre[2][1], 'turer')
 
