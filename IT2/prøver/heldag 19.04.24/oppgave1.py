@@ -6,7 +6,7 @@ Det vil gjøre at når vi leser csv-filen vil vi få for mange verdier, og de vi
 
 Et annet problem er hvis brukeren som har lagt inn data om sitt hjem ikke har fylt ut alle feltene.
 Det burde ikke føre til feil i lesingen av dataene, men det kan skape feil i statistikken. 
- """
+"""
 
 
 
@@ -19,9 +19,10 @@ def absRef(relRef): # Denne er hentet fra mange av egne tidligere oppgaver.
     return os.path.join(os.path.dirname(__file__), relRef)
 
 
-with open(absRef('utleige.csv')) as fil:
+with open(absRef('utleige.csv'), encoding='utf8') as fil:
     filinnhold = csv.reader(fil, delimiter=",")
     overskrifter = next(filinnhold)
+
     data = list(filinnhold)[1:-1]
 
 
