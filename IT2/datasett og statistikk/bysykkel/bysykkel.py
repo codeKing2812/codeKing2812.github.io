@@ -1,5 +1,4 @@
 import csv
-import pandas as pd
 
 import os
 def absRef(relRef): # funksjon for å finne absolutt referanse til en fil fra relativ referanse
@@ -9,8 +8,8 @@ def absRef(relRef): # funksjon for å finne absolutt referanse til en fil fra re
 with open(absRef("sykkel.csv"), encoding="utf-8-sig") as fil:
     filinnhold = csv.reader(fil, delimiter=";")
 
-    overskrifter = next(filinnhold)
-    print(overskrifter)
+    # overskrifter = next(filinnhold)
+    # print(overskrifter)
 
 
     data = list(filinnhold)[1:-1]
@@ -19,7 +18,7 @@ with open(absRef("sykkel.csv"), encoding="utf-8-sig") as fil:
 # skill ut startposisjon
     
 start = []
-for i in data: 
+for rad in data: 
     rad = rad[0].split(',')
     start.append(rad[4])
 
@@ -38,23 +37,41 @@ print(tellere)
 
 # sorteringsfunksjon
 
-toppTre = [('',0)] * 3
-print(toppTre)
+toppListe = [('',0)] * 3
+print(toppListe)
 
 for i in tellere:
-    if tellere[i] >= toppTre[0][1]:
+    if tellere[i] >= toppListe[2][1]:
+        # hvis større enn tredjeplass
 
-        toppTre[2] = toppTre[1]
-        toppTre[1] = toppTre[0]
-        # flytt ned de som allerede er på listen
+        if tellere[i] >= toppListe[1][1]:
+        # hvis større enn andreplass
+            
+            toppListe[2] = toppListe[1]
+            # flytt ned
+            
+            if tellere[i] >= toppListe[0][1]:
+                # hvis større enn førsteplass
+                
+                toppListe[1] = toppListe[0]
+                # flytt ned
 
-        toppTre[0] = (i, tellere[i])
-        # legg til ny toppplassering
+                toppListe[0] = (i, tellere[i])
+                # legg til ny plassering
 
-        print(toppTre)
+            else:
+                # ny andreplass
+                toppListe[1] = (i, tellere[i])
+                
+        else:
+            # ny tredjeplass
+            toppListe[2] = (i, tellere[i])
+
+    
+        print(toppListe)
 
 
-print(toppTre[0][0], 'er mest brukt, med', toppTre[0][1], 'turer')
-print(toppTre[1][0], 'er nest mest brukt, med', toppTre[1][1], 'turer')
-print(toppTre[2][0], 'er tredje mest brukt, med', toppTre[2][1], 'turer')
+print(toppListe[0][0], 'er mest brukt, med', toppListe[0][1], 'turer')
+print(toppListe[1][0], 'er nest mest brukt, med', toppListe[1][1], 'turer')
+print(toppListe[2][0], 'er tredje mest brukt, med', toppListe[2][1], 'turer')
 
