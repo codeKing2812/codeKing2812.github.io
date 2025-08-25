@@ -1,7 +1,6 @@
 
 import json
 
-
 import os # Funksjon for å finne absolutt referanse til en fil fra relativ referanse.
 def absRef(relRef): # Denne er hentet fra mange av egne tidligere oppgaver.
     return os.path.join(os.path.dirname(__file__), relRef)
@@ -110,7 +109,7 @@ nyttObjekt('plakat', 'jurassic park', 50, 500)
 
 ######################### BRUKERGRENSESNITT ####################
 
-os.system('clear')
+os.system('cls')
 
 print('-- __  S A M L E R A P P E N  __ --')
 print()

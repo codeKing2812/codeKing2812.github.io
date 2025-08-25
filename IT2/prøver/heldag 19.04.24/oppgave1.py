@@ -56,7 +56,7 @@ Første gang jeg gjorde dette, altså før jeg fjernet problematiske verdier, fi
 snitt: 152.72204610066882
 høyeste pris: 9999
 laveste pris: 0
- """
+"""
 
 
 ############################### DEL C + D ###############################
@@ -131,8 +131,8 @@ bredde_sum = 0
 lengde_sum = 0
 
 for punkt in punkter:
-  bredde_sum += punkt[0]
-  lengde_sum += punkt[1]
+    bredde_sum += punkt[0]
+    lengde_sum += punkt[1]
 
 bredde_snitt = bredde_sum / len(punkter)
 lengde_snitt = lengde_sum / len(punkter)
